@@ -1,32 +1,500 @@
 {
   "openapi": "3.1.0",
   "info": {
-    "title": "OpenAPI Plant Store",
-    "description": "A sample API that uses a plant store as an example to demonstrate features in the OpenAPI specification",
-    "license": {
-      "name": "MIT"
-    },
-    "version": "1.0.0"
+    "title": "FYATU API",
+    "version": "2"
   },
   "servers": [
     {
-      "url": "http://sandbox.mintlify.com"
+      "url": "https://api.fyatu.com/api/v2"
     }
   ],
+  "components": {
+    "securitySchemes": {
+      "sec0": {
+        "type": "oauth2",
+        "flows": {
+
+        }
+      }
+    }
+  },
   "security": [
     {
-      "bearerAuth": []
+      "sec0": []
     }
   ],
   "paths": {
-    "/plants": {
+    "/account/status": {
       "get": {
-        "description": "Returns all plants from the system that the user has access to",
+        "summary": "Status",
+        "description": "Use this endpoint to check your Account Status and get your Upgrade Token",
+        "operationId": "status",
         "parameters": [
+          {
+            "name": "email",
+            "in": "query",
+            "description": "Your Fyatu Email Address",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "clientId",
+            "in": "query",
+            "description": "Your Fyatu Client ID",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "200",
+            "content": {
+              "application/json": {
+                "examples": {
+                  "Result": {
+                    "value": "{\n  \"status\": \"success\",\n  \"statusCode\": 200,\n  \"errors\": false,\n  \"message\": \"Fetched Successfully\",\n  \"data\": {\n    \"type\": \"PERSONAL\",\n    \"status\": \"ACTIVE\",\n    \"kycStatus\": \"verified\",\n    \"balance\": 96.91,\n    \"currency\": \"USD\",\n    \"upgradeToken\": \"SECK-435ef3s921f4110b513715779b0bb0658-FYT\"\n  }\n}"
+                  }
+                },
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "status": {
+                      "type": "string",
+                      "example": "success"
+                    },
+                    "statusCode": {
+                      "type": "integer",
+                      "example": 200,
+                      "default": 0
+                    },
+                    "errors": {
+                      "type": "boolean",
+                      "example": false,
+                      "default": true
+                    },
+                    "message": {
+                      "type": "string",
+                      "example": "Fetched Successfully"
+                    },
+                    "data": {
+                      "type": "object",
+                      "properties": {
+                        "type": {
+                          "type": "string",
+                          "example": "PERSONAL"
+                        },
+                        "status": {
+                          "type": "string",
+                          "example": "ACTIVE"
+                        },
+                        "kycStatus": {
+                          "type": "string",
+                          "example": "verified"
+                        },
+                        "balance": {
+                          "type": "number",
+                          "example": 96.91,
+                          "default": 0
+                        },
+                        "currency": {
+                          "type": "string",
+                          "example": "USD"
+                        },
+                        "upgradeToken": {
+                          "type": "string",
+                          "example": "SECK-435ef3s921f4110b513715779b0bb0658-FYT"
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "400",
+            "content": {
+              "application/json": {
+                "examples": {
+                  "Result": {
+                    "value": "{\n    \"status\": \"failed\",\n    \"statusCode\": 400,\n    \"errors\": true,\n    \"message\": \"HTTPS is required to proceed this request.\",\n    \"data\": []\n}"
+                  }
+                },
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "status": {
+                      "type": "string",
+                      "example": "failed"
+                    },
+                    "statusCode": {
+                      "type": "integer",
+                      "example": 400,
+                      "default": 0
+                    },
+                    "errors": {
+                      "type": "boolean",
+                      "example": true,
+                      "default": true
+                    },
+                    "message": {
+                      "type": "string",
+                      "example": "HTTPS is required to proceed this request."
+                    },
+                    "data": {
+                      "type": "array"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "401",
+            "content": {
+              "application/json": {
+                "examples": {
+                  "Result": {
+                    "value": "{\n    \"status\": \"failed\",\n    \"statusCode\": 401,\n    \"errors\": true,\n    \"message\": \"Missing or Invalid API Key.\",\n    \"data\": []\n}"
+                  }
+                },
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "status": {
+                      "type": "string",
+                      "example": "failed"
+                    },
+                    "statusCode": {
+                      "type": "integer",
+                      "example": 401,
+                      "default": 0
+                    },
+                    "errors": {
+                      "type": "boolean",
+                      "example": true,
+                      "default": true
+                    },
+                    "message": {
+                      "type": "string",
+                      "example": "Missing or Invalid API Key."
+                    },
+                    "data": {
+                      "type": "array"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "deprecated": false,
+        "security": []
+      }
+    },
+    "/cards": {
+      "post": {
+        "summary": "CreateCard",
+        "description": "",
+        "operationId": "create-virtual-card-business",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "amount",
+                  "cardName",
+                  "customerId",
+                  "productCode"
+                ],
+                "properties": {
+                  "amount": {
+                    "type": "integer",
+                    "description": "Amount to be Deposited in the Card after Creation (Initial Deposit).",
+                    "format": "int32"
+                  },
+                  "cardName": {
+                    "type": "string",
+                    "description": "The Name that will be Shown on the Card"
+                  },
+                  "customerId": {
+                    "type": "string",
+                    "description": "The ID of the CardHolder whom the Card Belongs to (Provided by Fyatu)"
+                  },
+                  "productCode": {
+                    "type": "string",
+                    "description": "The Card Product's code for the Card you want to Create"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "200",
+            "content": {
+              "application/json": {
+                "examples": {
+                  "Result": {
+                    "value": "{\n    \"status\": \"success\",\n    \"statusCode\": 200,\n    \"errors\": false,\n    \"message\": \"Card created successfully\",\n    \"data\": {\n        \"id\": \"27a765b5-8bb0-45bb-9ae4-2e343c3882ea\",\n        \"cardName\": \"Nurdin Heracles\",\n        \"maskedNumber\": \"556338*******1628\",\n        \"cardNumber\": \"5563383564481628\",\n        \"cvv\": \"116\",\n        \"expiration\": \"01/26\",\n        \"balance\": \"22.00\",\n        \"lastDigits\": \"1628\",\n        \"currency\": \"USD\",\n        \"product\": {\n            \"name\": \"Mastercard Debit Universal - USD\",\n            \"code\": \"V_MC_DEBIT_USD_UNIV\",\n            \"type\": \"DEBIT\",\n            \"nature\": \"VIRTUAL\",\n            \"scheme\": \"MASTERCARD\",\n            \"currency\": \"USD\",\n            \"acceptance\": \"UNIVERSAL\",\n            \"is_3ds\": false,\n            \"monthly_price\": \"1.00\"\n        },\n        \"cardHolder\": {\n            \"id\": \"CTM63CAF3720FBD782350\",\n            \"firstName\": \"Joan\",\n            \"lastName\": \"Guy\",\n            \"dateOfBirth\": \"1993-12-24\",\n            \"gender\": \"F\",\n            \"email\": \"gosomekox@mailinator.com\",\n            \"phone\": \"+13715862121\",\n            \"status\": \"ACTIVE\",\n            \"createdAt\": \"2023-01-20 23:02:58\"\n        },\n        \"address\": \"471 mundet pl\",\n        \"city\": \"Hillside\",\n        \"state\": \"New jersey\",\n        \"postalCode\": \"07205\",\n        \"country\": \"US\",\n        \"status\": \"issued\",\n        \"createdAt\": \"2023-01-29 21:20:44\"\n    }\n}"
+                  }
+                },
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "status": {
+                      "type": "string",
+                      "example": "success"
+                    },
+                    "statusCode": {
+                      "type": "integer",
+                      "example": 200,
+                      "default": 0
+                    },
+                    "errors": {
+                      "type": "boolean",
+                      "example": false,
+                      "default": true
+                    },
+                    "message": {
+                      "type": "string",
+                      "example": "Card created successfully"
+                    },
+                    "data": {
+                      "type": "object",
+                      "properties": {
+                        "id": {
+                          "type": "string",
+                          "example": "27a765b5-8bb0-45bb-9ae4-2e343c3882ea"
+                        },
+                        "cardName": {
+                          "type": "string",
+                          "example": "Nurdin Heracles"
+                        },
+                        "maskedNumber": {
+                          "type": "string",
+                          "example": "556338*******1628"
+                        },
+                        "cardNumber": {
+                          "type": "string",
+                          "example": "5563383564481628"
+                        },
+                        "cvv": {
+                          "type": "string",
+                          "example": "116"
+                        },
+                        "expiration": {
+                          "type": "string",
+                          "example": "01/26"
+                        },
+                        "balance": {
+                          "type": "string",
+                          "example": "22.00"
+                        },
+                        "lastDigits": {
+                          "type": "string",
+                          "example": "1628"
+                        },
+                        "currency": {
+                          "type": "string",
+                          "example": "USD"
+                        },
+                        "product": {
+                          "type": "object",
+                          "properties": {
+                            "name": {
+                              "type": "string",
+                              "example": "Mastercard Debit Universal - USD"
+                            },
+                            "code": {
+                              "type": "string",
+                              "example": "V_MC_DEBIT_USD_UNIV"
+                            },
+                            "type": {
+                              "type": "string",
+                              "example": "DEBIT"
+                            },
+                            "nature": {
+                              "type": "string",
+                              "example": "VIRTUAL"
+                            },
+                            "scheme": {
+                              "type": "string",
+                              "example": "MASTERCARD"
+                            },
+                            "currency": {
+                              "type": "string",
+                              "example": "USD"
+                            },
+                            "acceptance": {
+                              "type": "string",
+                              "example": "UNIVERSAL"
+                            },
+                            "is_3ds": {
+                              "type": "boolean",
+                              "example": false,
+                              "default": true
+                            },
+                            "monthly_price": {
+                              "type": "string",
+                              "example": "1.00"
+                            }
+                          }
+                        },
+                        "cardHolder": {
+                          "type": "object",
+                          "properties": {
+                            "id": {
+                              "type": "string",
+                              "example": "CTM63CAF3720FBD782350"
+                            },
+                            "firstName": {
+                              "type": "string",
+                              "example": "Joan"
+                            },
+                            "lastName": {
+                              "type": "string",
+                              "example": "Guy"
+                            },
+                            "dateOfBirth": {
+                              "type": "string",
+                              "example": "1993-12-24"
+                            },
+                            "gender": {
+                              "type": "string",
+                              "example": "F"
+                            },
+                            "email": {
+                              "type": "string",
+                              "example": "gosomekox@mailinator.com"
+                            },
+                            "phone": {
+                              "type": "string",
+                              "example": "+13715862121"
+                            },
+                            "status": {
+                              "type": "string",
+                              "example": "ACTIVE"
+                            },
+                            "createdAt": {
+                              "type": "string",
+                              "example": "2023-01-20 23:02:58"
+                            }
+                          }
+                        },
+                        "address": {
+                          "type": "string",
+                          "example": "471 mundet pl"
+                        },
+                        "city": {
+                          "type": "string",
+                          "example": "Hillside"
+                        },
+                        "state": {
+                          "type": "string",
+                          "example": "New jersey"
+                        },
+                        "postalCode": {
+                          "type": "string",
+                          "example": "07205"
+                        },
+                        "country": {
+                          "type": "string",
+                          "example": "US"
+                        },
+                        "status": {
+                          "type": "string",
+                          "example": "issued"
+                        },
+                        "createdAt": {
+                          "type": "string",
+                          "example": "2023-01-29 21:20:44"
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "404",
+            "content": {
+              "application/json": {
+                "examples": {
+                  "Result": {
+                    "value": "{\n    \"status\": \"failed\",\n    \"errors\": \"NOT_FOUND\",\n    \"message\": \"No application found\",\n    \"data\": null\n}"
+                  }
+                },
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "status": {
+                      "type": "string",
+                      "example": "failed"
+                    },
+                    "errors": {
+                      "type": "string",
+                      "example": "NOT_FOUND"
+                    },
+                    "message": {
+                      "type": "string",
+                      "example": "No application found"
+                    },
+                    "data": {
+
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "deprecated": false
+      },
+      "get": {
+        "summary": "GetCardsList",
+        "description": "",
+        "operationId": "get-all-virtual-cards",
+        "parameters": [
+          {
+            "name": "from",
+            "in": "query",
+            "description": "Start date based on the card creation date. In format YYYY-MM-DD",
+            "schema": {
+              "type": "string",
+              "format": "date"
+            }
+          },
+          {
+            "name": "to",
+            "in": "query",
+            "description": "End date based on the card creation date. In format YYYY-MM-DD",
+            "schema": {
+              "type": "string",
+              "format": "date"
+            }
+          },
+          {
+            "name": "page",
+            "in": "query",
+            "description": "Page number to be fetched",
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          },
           {
             "name": "limit",
             "in": "query",
-            "description": "The maximum number of results to return",
+            "description": "Number of items to be fetched",
             "schema": {
               "type": "integer",
               "format": "int32"
@@ -35,183 +503,4095 @@
         ],
         "responses": {
           "200": {
-            "description": "Plant response",
+            "description": "200",
             "content": {
               "application/json": {
+                "examples": {
+                  "Result": {
+                    "value": "{\n    \"status\": \"success\",\n    \"statusCode\": 200,\n    \"errors\": false,\n    \"message\": \"Cards fetched successfully\",\n    \"data\": {\n        \"pagination\": {\n            \"totalResult\": 58,\n            \"itemPerPage\": 25,\n            \"totalPages\": 3,\n            \"currentPage\": 1,\n            \"offset\": 0\n        },\n        \"list\": [\n            {\n                \"id\": \"8cdd8495-84e0-406b-8351-2df7134a8e43\",\n                \"cardName\": \"Firdaus Nasibu\",\n                \"maskedNumber\": \"556338*******4806\",\n                \"expiration\": \"01/26\",\n                \"currency\": \"USD\",\n                \"type\": \"VIRTUAL\",\n                \"productCode\": \"V_MC_DEBIT_USD_UNIV\",\n                \"scheme\": \"MASTERCARD\",\n                \"status\": \"issued\",\n                \"billingAddress\": \"471 mundet pl\",\n                \"billingCity\": \"Hillside\",\n                \"billingState\": \"New jersey\",\n                \"billingPostal\": \"07205\",\n                \"billingCountry\": \"US\",\n                \"createdAt\": \"2023-01-27 17:10:43\"\n            }\n        ]\n    }\n}"
+                  }
+                },
                 "schema": {
-                  "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/Plant"
+                  "type": "object",
+                  "properties": {
+                    "status": {
+                      "type": "string",
+                      "example": "success"
+                    },
+                    "statusCode": {
+                      "type": "integer",
+                      "example": 200,
+                      "default": 0
+                    },
+                    "errors": {
+                      "type": "boolean",
+                      "example": false,
+                      "default": true
+                    },
+                    "message": {
+                      "type": "string",
+                      "example": "Cards fetched successfully"
+                    },
+                    "data": {
+                      "type": "object",
+                      "properties": {
+                        "pagination": {
+                          "type": "object",
+                          "properties": {
+                            "totalResult": {
+                              "type": "integer",
+                              "example": 58,
+                              "default": 0
+                            },
+                            "itemPerPage": {
+                              "type": "integer",
+                              "example": 25,
+                              "default": 0
+                            },
+                            "totalPages": {
+                              "type": "integer",
+                              "example": 3,
+                              "default": 0
+                            },
+                            "currentPage": {
+                              "type": "integer",
+                              "example": 1,
+                              "default": 0
+                            },
+                            "offset": {
+                              "type": "integer",
+                              "example": 0,
+                              "default": 0
+                            }
+                          }
+                        },
+                        "list": {
+                          "type": "array",
+                          "items": {
+                            "type": "object",
+                            "properties": {
+                              "id": {
+                                "type": "string",
+                                "example": "8cdd8495-84e0-406b-8351-2df7134a8e43"
+                              },
+                              "cardName": {
+                                "type": "string",
+                                "example": "Firdaus Nasibu"
+                              },
+                              "maskedNumber": {
+                                "type": "string",
+                                "example": "556338*******4806"
+                              },
+                              "expiration": {
+                                "type": "string",
+                                "example": "01/26"
+                              },
+                              "currency": {
+                                "type": "string",
+                                "example": "USD"
+                              },
+                              "type": {
+                                "type": "string",
+                                "example": "VIRTUAL"
+                              },
+                              "productCode": {
+                                "type": "string",
+                                "example": "V_MC_DEBIT_USD_UNIV"
+                              },
+                              "scheme": {
+                                "type": "string",
+                                "example": "MASTERCARD"
+                              },
+                              "status": {
+                                "type": "string",
+                                "example": "issued"
+                              },
+                              "billingAddress": {
+                                "type": "string",
+                                "example": "471 mundet pl"
+                              },
+                              "billingCity": {
+                                "type": "string",
+                                "example": "Hillside"
+                              },
+                              "billingState": {
+                                "type": "string",
+                                "example": "New jersey"
+                              },
+                              "billingPostal": {
+                                "type": "string",
+                                "example": "07205"
+                              },
+                              "billingCountry": {
+                                "type": "string",
+                                "example": "US"
+                              },
+                              "createdAt": {
+                                "type": "string",
+                                "example": "2023-01-27 17:10:43"
+                              }
+                            }
+                          }
+                        }
+                      }
+                    }
                   }
                 }
               }
             }
           },
           "400": {
-            "description": "Unexpected error",
+            "description": "400",
             "content": {
               "application/json": {
+                "examples": {
+                  "Result": {
+                    "value": "{\n  \"status\": \"failed\",\n  \"errors\": \"UNAUTHORIZED\",\n  \"message\": \"No Bearer Authorization header found\",\n  \"data\": null\n}"
+                  }
+                },
                 "schema": {
-                  "$ref": "#/components/schemas/Error"
+                  "type": "object",
+                  "properties": {
+                    "status": {
+                      "type": "string",
+                      "example": "failed"
+                    },
+                    "errors": {
+                      "type": "string",
+                      "example": "UNAUTHORIZED"
+                    },
+                    "message": {
+                      "type": "string",
+                      "example": "No Bearer Authorization header found"
+                    },
+                    "data": {
+
+                    }
+                  }
                 }
               }
             }
           }
-        }
-      },
+        },
+        "deprecated": false
+      }
+    },
+    "/account/upgrade": {
       "post": {
-        "description": "Creates a new plant in the store",
+        "summary": "Upgrade",
+        "description": "Use this endpoint to upgrade your Fyatu account from Personal to Business",
+        "operationId": "upgrade",
         "requestBody": {
-          "description": "Plant to add to the store",
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/NewPlant"
+                "type": "object",
+                "required": [
+                  "upgradeToken",
+                  "businessName",
+                  "appName",
+                  "websiteUrl",
+                  "supportEmail",
+                  "phoneNumber",
+                  "directorName",
+                  "businessType",
+                  "country",
+                  "businessAddress"
+                ],
+                "properties": {
+                  "upgradeToken": {
+                    "type": "string",
+                    "description": "The Upgrade Token you got from the \"Get Status\" endpoint."
+                  },
+                  "businessName": {
+                    "type": "string",
+                    "description": "Legal Name of your Business (Eg: Meta Platforms, Inc.)"
+                  },
+                  "appName": {
+                    "type": "string",
+                    "description": "Name of your Application - The App that will integrate Fyatu (Eg: Facebook)"
+                  },
+                  "websiteUrl": {
+                    "type": "string",
+                    "description": "Your website URL (Eg: https://facebook.com)"
+                  },
+                  "supportEmail": {
+                    "type": "string",
+                    "description": "Email to contact your Support"
+                  },
+                  "phoneNumber": {
+                    "type": "string",
+                    "description": "Phone Number of the Contact Person (Eg. +1234567890)"
+                  },
+                  "directorName": {
+                    "type": "string",
+                    "description": "Legal Full Name of the Director (Eg: John Miller Smith)"
+                  },
+                  "businessType": {
+                    "type": "string",
+                    "description": "The Industry in which your application is doing business in.",
+                    "default": "fintech",
+                    "enum": [
+                      "ecommerce",
+                      "fintech",
+                      "travel",
+                      "software",
+                      "media",
+                      "other"
+                    ]
+                  },
+                  "country": {
+                    "type": "string",
+                    "description": "ISO-2 Code of your country (Eg: TZ, CD, FR, UK)"
+                  },
+                  "businessAddress": {
+                    "type": "string",
+                    "description": "The Full Address of your HQ (Eg. 123 Lamy Street, My City, My State)"
+                  }
+                }
               }
             }
-          },
-          "required": true
+          }
         },
         "responses": {
           "200": {
-            "description": "plant response",
+            "description": "200",
             "content": {
               "application/json": {
+                "examples": {
+                  "Result": {
+                    "value": "{\n    \"status\": \"success\",\n    \"statusCode\": 200,\n    \"errors\": false,\n    \"message\": \"Balance History fetched successfully\",\n    \"data\": {\n        \"pagination\": {\n            \"totalResult\": 1,\n            \"itemPerPage\": 25,\n            \"totalPages\": 1,\n            \"currentPage\": 1,\n            \"offset\": 0\n        },\n        \"list\": [\n            {\n                \"id\": \"12011\",\n                \"reference\": \"621BE82E7575F4CA08252\",\n                \"amount\": \"13.00\",\n                \"balanceBefore\": \"2548.63\",\n                \"balanceAfter\": \"2535.63\",\n                \"transactionType\": \"OUT\",\n                \"description\": \"Recharge Carte **5764\",\n                \"date\": \"2022-02-27 23:07:58\"\n            }\n        ]\n    }\n}"
+                  }
+                },
                 "schema": {
-                  "$ref": "#/components/schemas/Plant"
+                  "type": "object",
+                  "properties": {
+                    "status": {
+                      "type": "string",
+                      "example": "success"
+                    },
+                    "statusCode": {
+                      "type": "integer",
+                      "example": 200,
+                      "default": 0
+                    },
+                    "errors": {
+                      "type": "boolean",
+                      "example": false,
+                      "default": true
+                    },
+                    "message": {
+                      "type": "string",
+                      "example": "Balance History fetched successfully"
+                    },
+                    "data": {
+                      "type": "object",
+                      "properties": {
+                        "pagination": {
+                          "type": "object",
+                          "properties": {
+                            "totalResult": {
+                              "type": "integer",
+                              "example": 1,
+                              "default": 0
+                            },
+                            "itemPerPage": {
+                              "type": "integer",
+                              "example": 25,
+                              "default": 0
+                            },
+                            "totalPages": {
+                              "type": "integer",
+                              "example": 1,
+                              "default": 0
+                            },
+                            "currentPage": {
+                              "type": "integer",
+                              "example": 1,
+                              "default": 0
+                            },
+                            "offset": {
+                              "type": "integer",
+                              "example": 0,
+                              "default": 0
+                            }
+                          }
+                        },
+                        "list": {
+                          "type": "array",
+                          "items": {
+                            "type": "object",
+                            "properties": {
+                              "id": {
+                                "type": "string",
+                                "example": "12011"
+                              },
+                              "reference": {
+                                "type": "string",
+                                "example": "621BE82E7575F4CA08252"
+                              },
+                              "amount": {
+                                "type": "string",
+                                "example": "13.00"
+                              },
+                              "balanceBefore": {
+                                "type": "string",
+                                "example": "2548.63"
+                              },
+                              "balanceAfter": {
+                                "type": "string",
+                                "example": "2535.63"
+                              },
+                              "transactionType": {
+                                "type": "string",
+                                "example": "OUT"
+                              },
+                              "description": {
+                                "type": "string",
+                                "example": "Recharge Carte **5764"
+                              },
+                              "date": {
+                                "type": "string",
+                                "example": "2022-02-27 23:07:58"
+                              }
+                            }
+                          }
+                        }
+                      }
+                    }
+                  }
                 }
               }
             }
           },
           "400": {
-            "description": "unexpected error",
+            "description": "400",
             "content": {
               "application/json": {
+                "examples": {
+                  "Result": {
+                    "value": "{\n  \"status\": \"failed\",\n  \"statusCode\": 400,\n  \"errors\": true,\n  \"message\": \"You already have a business account!\",\n  \"data\": []\n}"
+                  }
+                },
                 "schema": {
-                  "$ref": "#/components/schemas/Error"
+                  "type": "object",
+                  "properties": {
+                    "status": {
+                      "type": "string",
+                      "example": "failed"
+                    },
+                    "statusCode": {
+                      "type": "integer",
+                      "example": 400,
+                      "default": 0
+                    },
+                    "errors": {
+                      "type": "boolean",
+                      "example": true,
+                      "default": true
+                    },
+                    "message": {
+                      "type": "string",
+                      "example": "You already have a business account!"
+                    },
+                    "data": {
+                      "type": "array"
+                    }
+                  }
                 }
               }
             }
           }
-        }
+        },
+        "deprecated": false,
+        "security": []
       }
     },
-    "/plants/{id}": {
-      "delete": {
-        "description": "Deletes a single plant based on the ID supplied",
+    "/cards/{id}/unblock": {
+      "post": {
+        "summary": "UnblockCard",
+        "description": "",
+        "operationId": "activate-virtual-card",
         "parameters": [
           {
             "name": "id",
             "in": "path",
-            "description": "ID of plant to delete",
+            "description": "This is the unique id of the particular card you want to unblock. You can get this id from the call to create a virtual card or list virtual cards",
+            "schema": {
+              "type": "string"
+            },
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "200",
+            "content": {
+              "application/json": {
+                "examples": {
+                  "Result": {
+                    "value": "{\n    \"status\": \"success\",\n    \"statusCode\": 200,\n    \"errors\": false,\n    \"message\": \"Card activated successfully\",\n    \"data\": []\n}"
+                  }
+                },
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "status": {
+                      "type": "string",
+                      "example": "success"
+                    },
+                    "statusCode": {
+                      "type": "integer",
+                      "example": 200,
+                      "default": 0
+                    },
+                    "errors": {
+                      "type": "boolean",
+                      "example": false,
+                      "default": true
+                    },
+                    "message": {
+                      "type": "string",
+                      "example": "Card activated successfully"
+                    },
+                    "data": {
+                      "type": "array"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "404",
+            "content": {
+              "application/json": {
+                "examples": {
+                  "Result": {
+                    "value": "{\n    \"status\": \"failed\",\n    \"statusCode\": 404,\n    \"errors\": true,\n    \"message\": \"No card found with the ID: c370b43b-d924-4a13-a638-bcbf3bc845830\",\n    \"data\": []\n}"
+                  }
+                },
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "status": {
+                      "type": "string",
+                      "example": "failed"
+                    },
+                    "statusCode": {
+                      "type": "integer",
+                      "example": 404,
+                      "default": 0
+                    },
+                    "errors": {
+                      "type": "boolean",
+                      "example": true,
+                      "default": true
+                    },
+                    "message": {
+                      "type": "string",
+                      "example": "No card found with the ID: c370b43b-d924-4a13-a638-bcbf3bc845830"
+                    },
+                    "data": {
+                      "type": "array"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "deprecated": false
+      }
+    },
+    "/cards/{cardId}/transactions": {
+      "get": {
+        "summary": "GetCardTransactions",
+        "description": "",
+        "operationId": "get-card-transactions",
+        "parameters": [
+          {
+            "name": "cardId",
+            "in": "path",
+            "description": "The ID of the Card as Provided by Fyatu",
+            "schema": {
+              "type": "string"
+            },
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "200",
+            "content": {
+              "application/json": {
+                "examples": {
+                  "Result": {
+                    "value": "{\n    \"status\": \"success\",\n    \"statusCode\": 200,\n    \"errors\": false,\n    \"message\": \"Card transactions fetched successfully\",\n    \"data\": [\n        {\n            \"transactionId\": 4901446,\n            \"type\": \"credit\",\n            \"currency\": \"USD\",\n            \"amount\": 22,\n            \"description\": \"Card Funding\",\n            \"merchant\": \"556338*******1628\",\n            \"status\": \"Successful\",\n            \"createdDate\": \"2023-01-29 20:20:44\"\n        }\n    ]\n}"
+                  }
+                },
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "status": {
+                      "type": "string",
+                      "example": "success"
+                    },
+                    "statusCode": {
+                      "type": "integer",
+                      "example": 200,
+                      "default": 0
+                    },
+                    "errors": {
+                      "type": "boolean",
+                      "example": false,
+                      "default": true
+                    },
+                    "message": {
+                      "type": "string",
+                      "example": "Card transactions fetched successfully"
+                    },
+                    "data": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "transactionId": {
+                            "type": "integer",
+                            "example": 4901446,
+                            "default": 0
+                          },
+                          "type": {
+                            "type": "string",
+                            "example": "credit"
+                          },
+                          "currency": {
+                            "type": "string",
+                            "example": "USD"
+                          },
+                          "amount": {
+                            "type": "integer",
+                            "example": 22,
+                            "default": 0
+                          },
+                          "description": {
+                            "type": "string",
+                            "example": "Card Funding"
+                          },
+                          "merchant": {
+                            "type": "string",
+                            "example": "556338*******1628"
+                          },
+                          "status": {
+                            "type": "string",
+                            "example": "Successful"
+                          },
+                          "createdDate": {
+                            "type": "string",
+                            "example": "2023-01-29 20:20:44"
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "404",
+            "content": {
+              "application/json": {
+                "examples": {
+                  "Result": {
+                    "value": "{\n    \"status\": \"failed\",\n    \"errors\": \"NOT_FOUND\",\n    \"message\": \"Unable to get card\",\n    \"data\": null\n}"
+                  }
+                },
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "status": {
+                      "type": "string",
+                      "example": "failed"
+                    },
+                    "errors": {
+                      "type": "string",
+                      "example": "NOT_FOUND"
+                    },
+                    "message": {
+                      "type": "string",
+                      "example": "Unable to get card"
+                    },
+                    "data": {
+
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "deprecated": false
+      }
+    },
+    "/cards/{id}/withdraw": {
+      "post": {
+        "summary": "WithdrawFromCard",
+        "description": "",
+        "operationId": "withdraw-from-virtual-card",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "This is the unique id of the particular card you want to recharge. You can get this id from the call to create a virtual card or call to get virtual card details.",
+            "schema": {
+              "type": "string"
+            },
+            "required": true
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "amount"
+                ],
+                "properties": {
+                  "amount": {
+                    "type": "integer",
+                    "description": "This is the amount to withdraw from your card to your main balance.",
+                    "format": "int32"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "200",
+            "content": {
+              "application/json": {
+                "examples": {
+                  "Result": {
+                    "value": "{\n    \"status\": \"success\",\n    \"statusCode\": 200,\n    \"errors\": false,\n    \"message\": \"Withdraw from card successfully\",\n    \"data\": []\n}"
+                  }
+                },
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "status": {
+                      "type": "string",
+                      "example": "success"
+                    },
+                    "statusCode": {
+                      "type": "integer",
+                      "example": 200,
+                      "default": 0
+                    },
+                    "errors": {
+                      "type": "boolean",
+                      "example": false,
+                      "default": true
+                    },
+                    "message": {
+                      "type": "string",
+                      "example": "Withdraw from card successfully"
+                    },
+                    "data": {
+                      "type": "array"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "400",
+            "content": {
+              "application/json": {
+                "examples": {
+                  "Result": {
+                    "value": "{\n    \"status\": \"failed\",\n    \"statusCode\": 400,\n    \"errors\": true,\n    \"message\": \"insufficient card balance\",\n    \"data\": []\n}"
+                  }
+                },
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "status": {
+                      "type": "string",
+                      "example": "failed"
+                    },
+                    "statusCode": {
+                      "type": "integer",
+                      "example": 400,
+                      "default": 0
+                    },
+                    "errors": {
+                      "type": "boolean",
+                      "example": true,
+                      "default": true
+                    },
+                    "message": {
+                      "type": "string",
+                      "example": "insufficient card balance"
+                    },
+                    "data": {
+                      "type": "array"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "deprecated": false
+      }
+    },
+    "/cards/{id}/fund": {
+      "post": {
+        "summary": "RechargeCard",
+        "description": "",
+        "operationId": "recharge-virtual-card",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "This is the unique id of the particular card you want to recharge. You can get this id from the call to create a virtual card or call to get virtual card details.",
+            "schema": {
+              "type": "string"
+            },
+            "required": true
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "amount"
+                ],
+                "properties": {
+                  "amount": {
+                    "type": "integer",
+                    "description": "This is the amount to load into the card.",
+                    "format": "int32"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "200",
+            "content": {
+              "application/json": {
+                "examples": {
+                  "Result": {
+                    "value": "{\n    \"status\": \"success\",\n    \"statusCode\": 200,\n    \"errors\": false,\n    \"message\": \"Card balance credited successfully\",\n    \"data\": []\n}"
+                  }
+                },
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "status": {
+                      "type": "string",
+                      "example": "success"
+                    },
+                    "statusCode": {
+                      "type": "integer",
+                      "example": 200,
+                      "default": 0
+                    },
+                    "errors": {
+                      "type": "boolean",
+                      "example": false,
+                      "default": true
+                    },
+                    "message": {
+                      "type": "string",
+                      "example": "Card balance credited successfully"
+                    },
+                    "data": {
+                      "type": "array"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "400",
+            "content": {
+              "application/json": {
+                "examples": {
+                  "Result": {
+                    "value": "{\n    \"status\": \"failed\",\n    \"statusCode\": 403,\n    \"errors\": true,\n    \"message\": \"Your balance is too low\",\n    \"data\": []\n}"
+                  }
+                },
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "status": {
+                      "type": "string",
+                      "example": "failed"
+                    },
+                    "statusCode": {
+                      "type": "integer",
+                      "example": 403,
+                      "default": 0
+                    },
+                    "errors": {
+                      "type": "boolean",
+                      "example": true,
+                      "default": true
+                    },
+                    "message": {
+                      "type": "string",
+                      "example": "Your balance is too low"
+                    },
+                    "data": {
+                      "type": "array"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "deprecated": false
+      }
+    },
+    "/cards/{cardId}": {
+      "get": {
+        "summary": "GetCardDetails",
+        "description": "",
+        "operationId": "get-virtual-card",
+        "parameters": [
+          {
+            "name": "cardId",
+            "in": "path",
+            "description": "The ID of the Card as Provided by Fyatu",
+            "schema": {
+              "type": "string"
+            },
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "200",
+            "content": {
+              "application/json": {
+                "examples": {
+                  "Result": {
+                    "value": "{\n    \"status\": \"success\",\n    \"statusCode\": 200,\n    \"errors\": false,\n    \"message\": \"Card details fetched successfully\",\n    \"data\": {\n        \"id\": \"27a765b5-8bb0-45bb-9ae4-2e343c3882ea\",\n        \"cardName\": \"Nurdin Heracles\",\n        \"maskedNumber\": \"556338*******1628\",\n        \"cardNumber\": \"5563383564481628\",\n        \"cvv\": \"116\",\n        \"expiration\": \"01/26\",\n        \"balance\": \"22.00\",\n        \"lastDigits\": \"1628\",\n        \"currency\": \"USD\",\n        \"product\": {\n            \"name\": \"Mastercard Debit Universal - USD\",\n            \"code\": \"V_MC_DEBIT_USD_UNIV\",\n            \"type\": \"DEBIT\",\n            \"nature\": \"VIRTUAL\",\n            \"scheme\": \"MASTERCARD\",\n            \"currency\": \"USD\",\n            \"acceptance\": \"UNIVERSAL\",\n            \"is_3ds\": false,\n            \"monthly_price\": \"1.00\"\n        },\n        \"cardHolder\": {\n            \"id\": \"CTM63CAF3720FBD782350\",\n            \"firstName\": \"Joan\",\n            \"lastName\": \"Guy\",\n            \"dateOfBirth\": \"1993-12-24\",\n            \"gender\": \"F\",\n            \"email\": \"gosomekox@mailinator.com\",\n            \"phone\": \"+13715862121\",\n            \"status\": \"ACTIVE\",\n            \"createdAt\": \"2023-01-20 23:02:58\"\n        },\n        \"address\": \"471 mundet pl\",\n        \"city\": \"Hillside\",\n        \"state\": \"New jersey\",\n        \"postalCode\": \"07205\",\n        \"country\": \"US\",\n        \"status\": \"issued\",\n        \"createdAt\": \"2023-01-29 21:20:44\"\n    }\n}"
+                  }
+                },
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "status": {
+                      "type": "string",
+                      "example": "success"
+                    },
+                    "statusCode": {
+                      "type": "integer",
+                      "example": 200,
+                      "default": 0
+                    },
+                    "errors": {
+                      "type": "boolean",
+                      "example": false,
+                      "default": true
+                    },
+                    "message": {
+                      "type": "string",
+                      "example": "Card details fetched successfully"
+                    },
+                    "data": {
+                      "type": "object",
+                      "properties": {
+                        "id": {
+                          "type": "string",
+                          "example": "27a765b5-8bb0-45bb-9ae4-2e343c3882ea"
+                        },
+                        "cardName": {
+                          "type": "string",
+                          "example": "Nurdin Heracles"
+                        },
+                        "maskedNumber": {
+                          "type": "string",
+                          "example": "556338*******1628"
+                        },
+                        "cardNumber": {
+                          "type": "string",
+                          "example": "5563383564481628"
+                        },
+                        "cvv": {
+                          "type": "string",
+                          "example": "116"
+                        },
+                        "expiration": {
+                          "type": "string",
+                          "example": "01/26"
+                        },
+                        "balance": {
+                          "type": "string",
+                          "example": "22.00"
+                        },
+                        "lastDigits": {
+                          "type": "string",
+                          "example": "1628"
+                        },
+                        "currency": {
+                          "type": "string",
+                          "example": "USD"
+                        },
+                        "product": {
+                          "type": "object",
+                          "properties": {
+                            "name": {
+                              "type": "string",
+                              "example": "Mastercard Debit Universal - USD"
+                            },
+                            "code": {
+                              "type": "string",
+                              "example": "V_MC_DEBIT_USD_UNIV"
+                            },
+                            "type": {
+                              "type": "string",
+                              "example": "DEBIT"
+                            },
+                            "nature": {
+                              "type": "string",
+                              "example": "VIRTUAL"
+                            },
+                            "scheme": {
+                              "type": "string",
+                              "example": "MASTERCARD"
+                            },
+                            "currency": {
+                              "type": "string",
+                              "example": "USD"
+                            },
+                            "acceptance": {
+                              "type": "string",
+                              "example": "UNIVERSAL"
+                            },
+                            "is_3ds": {
+                              "type": "boolean",
+                              "example": false,
+                              "default": true
+                            },
+                            "monthly_price": {
+                              "type": "string",
+                              "example": "1.00"
+                            }
+                          }
+                        },
+                        "cardHolder": {
+                          "type": "object",
+                          "properties": {
+                            "id": {
+                              "type": "string",
+                              "example": "CTM63CAF3720FBD782350"
+                            },
+                            "firstName": {
+                              "type": "string",
+                              "example": "Joan"
+                            },
+                            "lastName": {
+                              "type": "string",
+                              "example": "Guy"
+                            },
+                            "dateOfBirth": {
+                              "type": "string",
+                              "example": "1993-12-24"
+                            },
+                            "gender": {
+                              "type": "string",
+                              "example": "F"
+                            },
+                            "email": {
+                              "type": "string",
+                              "example": "gosomekox@mailinator.com"
+                            },
+                            "phone": {
+                              "type": "string",
+                              "example": "+13715862121"
+                            },
+                            "status": {
+                              "type": "string",
+                              "example": "ACTIVE"
+                            },
+                            "createdAt": {
+                              "type": "string",
+                              "example": "2023-01-20 23:02:58"
+                            }
+                          }
+                        },
+                        "address": {
+                          "type": "string",
+                          "example": "471 mundet pl"
+                        },
+                        "city": {
+                          "type": "string",
+                          "example": "Hillside"
+                        },
+                        "state": {
+                          "type": "string",
+                          "example": "New jersey"
+                        },
+                        "postalCode": {
+                          "type": "string",
+                          "example": "07205"
+                        },
+                        "country": {
+                          "type": "string",
+                          "example": "US"
+                        },
+                        "status": {
+                          "type": "string",
+                          "example": "issued"
+                        },
+                        "createdAt": {
+                          "type": "string",
+                          "example": "2023-01-29 21:20:44"
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "404",
+            "content": {
+              "application/json": {
+                "examples": {
+                  "Result": {
+                    "value": "{\n    \"status\": \"failed\",\n    \"errors\": \"NOT_FOUND\",\n    \"message\": \"Unable to get card\",\n    \"data\": null\n}"
+                  }
+                },
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "status": {
+                      "type": "string",
+                      "example": "failed"
+                    },
+                    "errors": {
+                      "type": "string",
+                      "example": "NOT_FOUND"
+                    },
+                    "message": {
+                      "type": "string",
+                      "example": "Unable to get card"
+                    },
+                    "data": {
+
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "deprecated": false
+      },
+      "delete": {
+        "summary": "DeleteCard",
+        "description": "",
+        "operationId": "deletecard",
+        "parameters": [
+          {
+            "name": "cardId",
+            "in": "path",
+            "description": "The ID of the Card to be deleted",
+            "schema": {
+              "type": "string"
+            },
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "200",
+            "content": {
+              "application/json": {
+                "examples": {
+                  "Result": {
+                    "value": "{\n    \"status\": \"success\",\n    \"statusCode\": 200,\n    \"errors\": false,\n    \"message\": \"Card deleted successfully\",\n    \"data\": []\n}"
+                  }
+                },
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "status": {
+                      "type": "string",
+                      "example": "success"
+                    },
+                    "statusCode": {
+                      "type": "integer",
+                      "example": 200,
+                      "default": 0
+                    },
+                    "errors": {
+                      "type": "boolean",
+                      "example": false,
+                      "default": true
+                    },
+                    "message": {
+                      "type": "string",
+                      "example": "Card deleted successfully"
+                    },
+                    "data": {
+                      "type": "array"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "404",
+            "content": {
+              "application/json": {
+                "examples": {
+                  "Result": {
+                    "value": "{\n    \"status\": \"failed\",\n    \"statusCode\": 404,\n    \"errors\": true,\n    \"message\": \"No card found with the ID: c370b43b-d924-4a13-a638-bcbf3bc845830\",\n    \"data\": []\n}"
+                  }
+                },
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "status": {
+                      "type": "string",
+                      "example": "failed"
+                    },
+                    "statusCode": {
+                      "type": "integer",
+                      "example": 404,
+                      "default": 0
+                    },
+                    "errors": {
+                      "type": "boolean",
+                      "example": true,
+                      "default": true
+                    },
+                    "message": {
+                      "type": "string",
+                      "example": "No card found with the ID: c370b43b-d924-4a13-a638-bcbf3bc845830"
+                    },
+                    "data": {
+                      "type": "array"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "deprecated": false
+      }
+    },
+    "/cards/{id}/block": {
+      "post": {
+        "summary": "BlockCard",
+        "description": "",
+        "operationId": "block-virtual-card",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "This is the unique id of the particular card you want to freeze. You can get this id from the call to create a virtual card or list virtual cards",
+            "schema": {
+              "type": "string"
+            },
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "200",
+            "content": {
+              "application/json": {
+                "examples": {
+                  "Result": {
+                    "value": "{\n    \"status\": \"success\",\n    \"statusCode\": 200,\n    \"errors\": false,\n    \"message\": \"Card frozen successfully\",\n    \"data\": []\n}"
+                  }
+                },
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "status": {
+                      "type": "string",
+                      "example": "success"
+                    },
+                    "statusCode": {
+                      "type": "integer",
+                      "example": 200,
+                      "default": 0
+                    },
+                    "errors": {
+                      "type": "boolean",
+                      "example": false,
+                      "default": true
+                    },
+                    "message": {
+                      "type": "string",
+                      "example": "Card frozen successfully"
+                    },
+                    "data": {
+                      "type": "array"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "404",
+            "content": {
+              "application/json": {
+                "examples": {
+                  "Result": {
+                    "value": "{\n    \"status\": \"failed\",\n    \"statusCode\": 404,\n    \"errors\": true,\n    \"message\": \"No card found with the ID: c370b43b-d924-4a13-a638-bcbf3bc845830\",\n    \"data\": []\n}"
+                  }
+                },
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "status": {
+                      "type": "string",
+                      "example": "failed"
+                    },
+                    "statusCode": {
+                      "type": "integer",
+                      "example": 404,
+                      "default": 0
+                    },
+                    "errors": {
+                      "type": "boolean",
+                      "example": true,
+                      "default": true
+                    },
+                    "message": {
+                      "type": "string",
+                      "example": "No card found with the ID: c370b43b-d924-4a13-a638-bcbf3bc845830"
+                    },
+                    "data": {
+                      "type": "array"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "deprecated": false
+      }
+    },
+    "/airtime/operators": {
+      "get": {
+        "summary": "GetOperatorsList",
+        "description": "",
+        "operationId": "getoperatorslist",
+        "responses": {
+          "200": {
+            "description": "200",
+            "content": {
+              "application/json": {
+                "examples": {
+                  "Result": {
+                    "value": "{\n    \"status\": \"success\",\n    \"statusCode\": 200,\n    \"errors\": false,\n    \"message\": \"Operators list fetched successfully\",\n    \"data\": [\n        {\n            \"operatorId\": 729,\n            \"name\": \"168 Thailand\",\n            \"logo\": \"https://s3.amazonaws.com/rld-operator/13f57481-aad1-4534-8434-428f7ea32ffb-size-1.png\",\n            \"country\": \"TH\",\n            \"fromCurrency\": \"USD\",\n            \"toCurrency\": \"THB\",\n            \"rate\": 24.39,\n            \"hasFixedAmounts\": true,\n            \"fixedAmounts\": [\n                0.41,\n                0.81,\n                2.03,\n                4.05,\n                8.1,\n                12.14,\n                20.23\n            ],\n            \"suggestedAmounts\": []\n        }\n    ]\n}"
+                  }
+                },
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "status": {
+                      "type": "string",
+                      "example": "success"
+                    },
+                    "statusCode": {
+                      "type": "integer",
+                      "example": 200,
+                      "default": 0
+                    },
+                    "errors": {
+                      "type": "boolean",
+                      "example": false,
+                      "default": true
+                    },
+                    "message": {
+                      "type": "string",
+                      "example": "Operators list fetched successfully"
+                    },
+                    "data": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "operatorId": {
+                            "type": "integer",
+                            "example": 729,
+                            "default": 0
+                          },
+                          "name": {
+                            "type": "string",
+                            "example": "168 Thailand"
+                          },
+                          "logo": {
+                            "type": "string",
+                            "example": "https://s3.amazonaws.com/rld-operator/13f57481-aad1-4534-8434-428f7ea32ffb-size-1.png"
+                          },
+                          "country": {
+                            "type": "string",
+                            "example": "TH"
+                          },
+                          "fromCurrency": {
+                            "type": "string",
+                            "example": "USD"
+                          },
+                          "toCurrency": {
+                            "type": "string",
+                            "example": "THB"
+                          },
+                          "rate": {
+                            "type": "number",
+                            "example": 24.39,
+                            "default": 0
+                          },
+                          "hasFixedAmounts": {
+                            "type": "boolean",
+                            "example": true,
+                            "default": true
+                          },
+                          "fixedAmounts": {
+                            "type": "array",
+                            "items": {
+                              "type": "number",
+                              "example": 0.41,
+                              "default": 0
+                            }
+                          },
+                          "suggestedAmounts": {
+                            "type": "array"
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "401",
+            "content": {
+              "application/json": {
+                "examples": {
+                  "Result": {
+                    "value": "{\n    \"status\": \"failed\",\n    \"statusCode\": 401,\n    \"errors\": true,\n    \"message\": \"Missing or Invalid API Key.\",\n    \"data\": []\n}"
+                  }
+                },
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "status": {
+                      "type": "string",
+                      "example": "failed"
+                    },
+                    "statusCode": {
+                      "type": "integer",
+                      "example": 401,
+                      "default": 0
+                    },
+                    "errors": {
+                      "type": "boolean",
+                      "example": true,
+                      "default": true
+                    },
+                    "message": {
+                      "type": "string",
+                      "example": "Missing or Invalid API Key."
+                    },
+                    "data": {
+                      "type": "array"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "deprecated": false
+      }
+    },
+    "/airtime/autodetect": {
+      "get": {
+        "summary": "AutoDetectOperator",
+        "description": "",
+        "operationId": "autodetectoperator",
+        "parameters": [
+          {
+            "name": "phone",
+            "in": "query",
+            "description": "Enter a phone number in International format without (+) sign. Eg: 243970000000",
             "required": true,
             "schema": {
               "type": "integer",
               "format": "int64"
             }
+          },
+          {
+            "name": "country",
+            "in": "query",
+            "description": "Enter country ISO code. (2 letters). Eg: CD, US, FR, etc...",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
           }
         ],
         "responses": {
-          "204": {
-            "description": "Plant deleted",
-            "content": {}
-          },
-          "400": {
-            "description": "unexpected error",
+          "200": {
+            "description": "200",
             "content": {
               "application/json": {
+                "examples": {
+                  "Result": {
+                    "value": "{\n    \"status\": \"success\",\n    \"statusCode\": 200,\n    \"errors\": false,\n    \"message\": \"Operator data fetched successfully\",\n    \"data\": {\n        \"operatorId\": 417,\n        \"name\": \"MTN Rwanda\",\n        \"logo\": \"https://s3.amazonaws.com/rld-operator/fee93ce0-1917-404e-87fb-c17c6c75326a-size-1.png\",\n        \"country\": \"RW\",\n        \"fromCurrency\": \"USD\",\n        \"toCurrency\": \"RWF\",\n        \"rate\": 800,\n        \"hasFixedAmounts\": false,\n        \"fixedAmounts\": [],\n        \"suggestedAmounts\": [\n            1,\n            5,\n            10,\n            15,\n            20,\n            25,\n            30,\n            35,\n            40,\n            45,\n            50,\n            55,\n            60,\n            65,\n            70,\n            75,\n            80,\n            85,\n            90,\n            95,\n            100,\n            105,\n            110,\n            115,\n            120,\n            125,\n            130,\n            135,\n            140,\n            145,\n            150,\n            155,\n            160,\n            165,\n            170,\n            175,\n            180,\n            185,\n            190,\n            195,\n            200,\n            205,\n            210,\n            215,\n            220,\n            225,\n            230,\n            235,\n            240,\n            245,\n            250,\n            255,\n            260,\n            265,\n            270,\n            275,\n            280,\n            285,\n            290,\n            295,\n            300,\n            305,\n            310,\n            315,\n            320,\n            325,\n            330,\n            335,\n            340,\n            345,\n            350,\n            355,\n            360,\n            365,\n            370,\n            375,\n            380,\n            385,\n            390,\n            395,\n            400,\n            405,\n            410,\n            415,\n            420,\n            425,\n            430,\n            435,\n            440,\n            445,\n            450,\n            455,\n            460,\n            465,\n            470,\n            475,\n            480,\n            485,\n            490,\n            495,\n            500,\n            505,\n            510,\n            515,\n            520,\n            525,\n            530,\n            535,\n            540,\n            545,\n            550,\n            555,\n            560,\n            565,\n            570,\n            575,\n            580\n        ]\n    }\n}"
+                  }
+                },
                 "schema": {
-                  "$ref": "#/components/schemas/Error"
+                  "type": "object",
+                  "properties": {
+                    "status": {
+                      "type": "string",
+                      "example": "success"
+                    },
+                    "statusCode": {
+                      "type": "integer",
+                      "example": 200,
+                      "default": 0
+                    },
+                    "errors": {
+                      "type": "boolean",
+                      "example": false,
+                      "default": true
+                    },
+                    "message": {
+                      "type": "string",
+                      "example": "Operator data fetched successfully"
+                    },
+                    "data": {
+                      "type": "object",
+                      "properties": {
+                        "operatorId": {
+                          "type": "integer",
+                          "example": 417,
+                          "default": 0
+                        },
+                        "name": {
+                          "type": "string",
+                          "example": "MTN Rwanda"
+                        },
+                        "logo": {
+                          "type": "string",
+                          "example": "https://s3.amazonaws.com/rld-operator/fee93ce0-1917-404e-87fb-c17c6c75326a-size-1.png"
+                        },
+                        "country": {
+                          "type": "string",
+                          "example": "RW"
+                        },
+                        "fromCurrency": {
+                          "type": "string",
+                          "example": "USD"
+                        },
+                        "toCurrency": {
+                          "type": "string",
+                          "example": "RWF"
+                        },
+                        "rate": {
+                          "type": "integer",
+                          "example": 800,
+                          "default": 0
+                        },
+                        "hasFixedAmounts": {
+                          "type": "boolean",
+                          "example": false,
+                          "default": true
+                        },
+                        "fixedAmounts": {
+                          "type": "array"
+                        },
+                        "suggestedAmounts": {
+                          "type": "array",
+                          "items": {
+                            "type": "integer",
+                            "example": 1,
+                            "default": 0
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "401",
+            "content": {
+              "application/json": {
+                "examples": {
+                  "Result": {
+                    "value": "{\n    \"status\": \"failed\",\n    \"statusCode\": 401,\n    \"errors\": true,\n    \"message\": \"Missing or Invalid API Key.\",\n    \"data\": []\n}"
+                  }
+                },
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "status": {
+                      "type": "string",
+                      "example": "failed"
+                    },
+                    "statusCode": {
+                      "type": "integer",
+                      "example": 401,
+                      "default": 0
+                    },
+                    "errors": {
+                      "type": "boolean",
+                      "example": true,
+                      "default": true
+                    },
+                    "message": {
+                      "type": "string",
+                      "example": "Missing or Invalid API Key."
+                    },
+                    "data": {
+                      "type": "array"
+                    }
+                  }
                 }
               }
             }
           }
-        }
+        },
+        "deprecated": false
       }
-    }
-  },
-  "webhooks": {
-    "/plant/webhook": {
+    },
+    "/cardholders": {
       "post": {
-        "description": "Information about a new plant added to the store",
+        "summary": "CreateCardHolder",
+        "description": "",
+        "operationId": "createcustomer",
         "requestBody": {
-          "description": "Plant added to the store",
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/NewPlant"
+                "type": "object",
+                "required": [
+                  "firstName",
+                  "lastName",
+                  "dateOfBirth",
+                  "gender",
+                  "email",
+                  "phone"
+                ],
+                "properties": {
+                  "firstName": {
+                    "type": "string",
+                    "description": "The First Name of your cardholder (Latin)"
+                  },
+                  "lastName": {
+                    "type": "string",
+                    "description": "The Last Name of your cardholder (Latin)"
+                  },
+                  "dateOfBirth": {
+                    "type": "string",
+                    "description": "Date of Birth of your cardholder",
+                    "format": "date"
+                  },
+                  "gender": {
+                    "type": "string",
+                    "description": "Gender of the the Cardholder",
+                    "default": "M",
+                    "enum": [
+                      "M",
+                      "F"
+                    ]
+                  },
+                  "email": {
+                    "type": "string",
+                    "description": "Email address of your CardHolder"
+                  },
+                  "phone": {
+                    "type": "integer",
+                    "description": "Phone Number of your CardHolder in International format (+1234567890)",
+                    "format": "int64"
+                  }
+                }
               }
             }
           }
         },
         "responses": {
           "200": {
-            "description": "Return a 200 status to indicate that the data was received successfully"
-          }
-        }
-      }
-    }
-  },
-  "components": {
-    "schemas": {
-      "Plant": {
-        "required": [
-          "name"
-        ],
-        "type": "object",
-        "properties": {
-          "name": {
-            "description": "The name of the plant",
-            "type": "string"
+            "description": "200",
+            "content": {
+              "application/json": {
+                "examples": {
+                  "Result": {
+                    "value": "{\n    \"status\": \"success\",\n    \"statusCode\": 200,\n    \"errors\": false,\n    \"message\": \"CardHolder account created successfully\",\n    \"data\": {\n        \"customerId\": \"CTM6231E0E2592EC32251\",\n        \"firstName\": \"John\",\n        \"lastName\": \"Smith\",\n        \"gender\": \"M\",\n        \"dateOfBirth\": \"1999/12/30\",\n        \"email\": \"thisemail@gmail.com\",\n        \"phone\": \"243970000000\",\n        \"status\": \"ACTIVE\",\n        \"createdAt\": \"2022-03-16 15:06:42\"\n    }\n}"
+                  }
+                },
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "status": {
+                      "type": "string",
+                      "example": "success"
+                    },
+                    "statusCode": {
+                      "type": "integer",
+                      "example": 200,
+                      "default": 0
+                    },
+                    "errors": {
+                      "type": "boolean",
+                      "example": false,
+                      "default": true
+                    },
+                    "message": {
+                      "type": "string",
+                      "example": "CardHolder account created successfully"
+                    },
+                    "data": {
+                      "type": "object",
+                      "properties": {
+                        "customerId": {
+                          "type": "string",
+                          "example": "CTM6231E0E2592EC32251"
+                        },
+                        "firstName": {
+                          "type": "string",
+                          "example": "John"
+                        },
+                        "lastName": {
+                          "type": "string",
+                          "example": "Smith"
+                        },
+                        "gender": {
+                          "type": "string",
+                          "example": "M"
+                        },
+                        "dateOfBirth": {
+                          "type": "string",
+                          "example": "1999/12/30"
+                        },
+                        "email": {
+                          "type": "string",
+                          "example": "thisemail@gmail.com"
+                        },
+                        "phone": {
+                          "type": "string",
+                          "example": "243970000000"
+                        },
+                        "status": {
+                          "type": "string",
+                          "example": "ACTIVE"
+                        },
+                        "createdAt": {
+                          "type": "string",
+                          "example": "2022-03-16 15:06:42"
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
           },
-          "tag": {
-            "description": "Tag to specify the type",
-            "type": "string"
-          }
-        }
-      },
-      "NewPlant": {
-        "allOf": [
-          {
-            "$ref": "#/components/schemas/Plant"
-          },
-          {
-            "required": [
-              "id"
-            ],
-            "type": "object",
-            "properties": {
-              "id": {
-                "description": "Identification number of the plant",
-                "type": "integer",
-                "format": "int64"
+          "401": {
+            "description": "401",
+            "content": {
+              "application/json": {
+                "examples": {
+                  "Result": {
+                    "value": "{\n    \"status\": \"failed\",\n    \"statusCode\": 401,\n    \"errors\": true,\n    \"message\": \"Missing or Invalid API Key.\",\n    \"data\": []\n}"
+                  }
+                },
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "status": {
+                      "type": "string",
+                      "example": "failed"
+                    },
+                    "statusCode": {
+                      "type": "integer",
+                      "example": 401,
+                      "default": 0
+                    },
+                    "errors": {
+                      "type": "boolean",
+                      "example": true,
+                      "default": true
+                    },
+                    "message": {
+                      "type": "string",
+                      "example": "Missing or Invalid API Key."
+                    },
+                    "data": {
+                      "type": "array"
+                    }
+                  }
+                }
               }
             }
           }
-        ]
+        },
+        "deprecated": false
       },
-      "Error": {
-        "required": [
-          "error",
-          "message"
-        ],
-        "type": "object",
-        "properties": {
-          "error": {
-            "type": "integer",
-            "format": "int32"
+      "get": {
+        "summary": "GetCardHoldersList",
+        "description": "",
+        "operationId": "getcustomerslist",
+        "parameters": [
+          {
+            "name": "from",
+            "in": "query",
+            "description": "Start date for the creation date",
+            "schema": {
+              "type": "string"
+            }
           },
-          "message": {
-            "type": "string"
+          {
+            "name": "to",
+            "in": "query",
+            "description": "Todate for the creation date",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "page",
+            "in": "query",
+            "description": "Page number to be fetched",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "description": "Number of items to be fetched",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "status",
+            "in": "query",
+            "description": "Filter your customers by Status",
+            "schema": {
+              "type": "string",
+              "enum": [
+                "\"ACTIVE\"",
+                "\"SUSPENDED\""
+              ]
+            }
           }
-        }
+        ],
+        "responses": {
+          "200": {
+            "description": "200",
+            "content": {
+              "application/json": {
+                "examples": {
+                  "Result": {
+                    "value": "{\n    \"status\": \"success\",\n    \"statusCode\": 200,\n    \"errors\": false,\n    \"message\": \"Data fetched successfully\",\n    \"data\": {\n        \"pagination\": {\n            \"totalResult\": 9,\n            \"itemPerPage\": 25,\n            \"totalPages\": 1,\n            \"currentPage\": 1,\n            \"offset\": 0\n        },\n        \"list\": [\n            {\n                \"id\": \"CTM63CAF3720FBD782350\",\n                \"firstName\": \"Joan\",\n                \"lastName\": \"Guy\",\n                \"dateOfBirth\": \"1993-12-24\",\n                \"gender\": \"F\",\n                \"email\": \"gosomekox@mailinator.com\",\n                \"phone\": \"+13715862121\",\n                \"status\": \"ACTIVE\",\n                \"createdAt\": \"2023-01-20 23:02:58\"\n            }\n        ]\n    }\n}"
+                  }
+                },
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "status": {
+                      "type": "string",
+                      "example": "success"
+                    },
+                    "statusCode": {
+                      "type": "integer",
+                      "example": 200,
+                      "default": 0
+                    },
+                    "errors": {
+                      "type": "boolean",
+                      "example": false,
+                      "default": true
+                    },
+                    "message": {
+                      "type": "string",
+                      "example": "Data fetched successfully"
+                    },
+                    "data": {
+                      "type": "object",
+                      "properties": {
+                        "pagination": {
+                          "type": "object",
+                          "properties": {
+                            "totalResult": {
+                              "type": "integer",
+                              "example": 9,
+                              "default": 0
+                            },
+                            "itemPerPage": {
+                              "type": "integer",
+                              "example": 25,
+                              "default": 0
+                            },
+                            "totalPages": {
+                              "type": "integer",
+                              "example": 1,
+                              "default": 0
+                            },
+                            "currentPage": {
+                              "type": "integer",
+                              "example": 1,
+                              "default": 0
+                            },
+                            "offset": {
+                              "type": "integer",
+                              "example": 0,
+                              "default": 0
+                            }
+                          }
+                        },
+                        "list": {
+                          "type": "array",
+                          "items": {
+                            "type": "object",
+                            "properties": {
+                              "id": {
+                                "type": "string",
+                                "example": "CTM63CAF3720FBD782350"
+                              },
+                              "firstName": {
+                                "type": "string",
+                                "example": "Joan"
+                              },
+                              "lastName": {
+                                "type": "string",
+                                "example": "Guy"
+                              },
+                              "dateOfBirth": {
+                                "type": "string",
+                                "example": "1993-12-24"
+                              },
+                              "gender": {
+                                "type": "string",
+                                "example": "F"
+                              },
+                              "email": {
+                                "type": "string",
+                                "example": "gosomekox@mailinator.com"
+                              },
+                              "phone": {
+                                "type": "string",
+                                "example": "+13715862121"
+                              },
+                              "status": {
+                                "type": "string",
+                                "example": "ACTIVE"
+                              },
+                              "createdAt": {
+                                "type": "string",
+                                "example": "2023-01-20 23:02:58"
+                              }
+                            }
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "401",
+            "content": {
+              "application/json": {
+                "examples": {
+                  "Result": {
+                    "value": "{\n    \"status\": \"failed\",\n    \"statusCode\": 401,\n    \"errors\": true,\n    \"message\": \"Missing or Invalid API Key.\",\n    \"data\": []\n}"
+                  }
+                },
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "status": {
+                      "type": "string",
+                      "example": "failed"
+                    },
+                    "statusCode": {
+                      "type": "integer",
+                      "example": 401,
+                      "default": 0
+                    },
+                    "errors": {
+                      "type": "boolean",
+                      "example": true,
+                      "default": true
+                    },
+                    "message": {
+                      "type": "string",
+                      "example": "Missing or Invalid API Key."
+                    },
+                    "data": {
+                      "type": "array"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "deprecated": false
       }
     },
-    "securitySchemes": {
-      "bearerAuth": {
-        "type": "http",
-        "scheme": "bearer"
+    "/airtime/operator": {
+      "get": {
+        "summary": "GetOperatorByID",
+        "description": "",
+        "operationId": "getoperatorbyid",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "query",
+            "description": "ID of the Operator in the Fyatu System",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "200",
+            "content": {
+              "application/json": {
+                "examples": {
+                  "Result": {
+                    "value": "{\n    \"status\": \"success\",\n    \"statusCode\": 200,\n    \"errors\": false,\n    \"message\": \"Operator data fetched successfully\",\n    \"data\": {\n        \"operatorId\": 417,\n        \"name\": \"MTN Rwanda\",\n        \"logo\": \"https://s3.amazonaws.com/rld-operator/fee93ce0-1917-404e-87fb-c17c6c75326a-size-1.png\",\n        \"country\": \"RW\",\n        \"fromCurrency\": \"USD\",\n        \"toCurrency\": \"RWF\",\n        \"rate\": 800,\n        \"hasFixedAmounts\": false,\n        \"fixedAmounts\": [],\n        \"suggestedAmounts\": [\n            1,\n            5,\n            10,\n            15,\n            20,\n            25,\n            30,\n            35,\n            40,\n            45,\n            50,\n            55,\n            60,\n            65,\n            70,\n            75,\n            80,\n            85,\n            90,\n            95,\n            100,\n            105,\n            110,\n            115,\n            120,\n            125,\n            130,\n            135,\n            140,\n            145,\n            150,\n            155,\n            160,\n            165,\n            170,\n            175,\n            180,\n            185,\n            190,\n            195,\n            200,\n            205,\n            210,\n            215,\n            220,\n            225,\n            230,\n            235,\n            240,\n            245,\n            250,\n            255,\n            260,\n            265,\n            270,\n            275,\n            280,\n            285,\n            290,\n            295,\n            300,\n            305,\n            310,\n            315,\n            320,\n            325,\n            330,\n            335,\n            340,\n            345,\n            350,\n            355,\n            360,\n            365,\n            370,\n            375,\n            380,\n            385,\n            390,\n            395,\n            400,\n            405,\n            410,\n            415,\n            420,\n            425,\n            430,\n            435,\n            440,\n            445,\n            450,\n            455,\n            460,\n            465,\n            470,\n            475,\n            480,\n            485,\n            490,\n            495,\n            500,\n            505,\n            510,\n            515,\n            520,\n            525,\n            530,\n            535,\n            540,\n            545,\n            550,\n            555,\n            560,\n            565,\n            570,\n            575,\n            580\n        ]\n    }\n}"
+                  }
+                },
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "status": {
+                      "type": "string",
+                      "example": "success"
+                    },
+                    "statusCode": {
+                      "type": "integer",
+                      "example": 200,
+                      "default": 0
+                    },
+                    "errors": {
+                      "type": "boolean",
+                      "example": false,
+                      "default": true
+                    },
+                    "message": {
+                      "type": "string",
+                      "example": "Operator data fetched successfully"
+                    },
+                    "data": {
+                      "type": "object",
+                      "properties": {
+                        "operatorId": {
+                          "type": "integer",
+                          "example": 417,
+                          "default": 0
+                        },
+                        "name": {
+                          "type": "string",
+                          "example": "MTN Rwanda"
+                        },
+                        "logo": {
+                          "type": "string",
+                          "example": "https://s3.amazonaws.com/rld-operator/fee93ce0-1917-404e-87fb-c17c6c75326a-size-1.png"
+                        },
+                        "country": {
+                          "type": "string",
+                          "example": "RW"
+                        },
+                        "fromCurrency": {
+                          "type": "string",
+                          "example": "USD"
+                        },
+                        "toCurrency": {
+                          "type": "string",
+                          "example": "RWF"
+                        },
+                        "rate": {
+                          "type": "integer",
+                          "example": 800,
+                          "default": 0
+                        },
+                        "hasFixedAmounts": {
+                          "type": "boolean",
+                          "example": false,
+                          "default": true
+                        },
+                        "fixedAmounts": {
+                          "type": "array"
+                        },
+                        "suggestedAmounts": {
+                          "type": "array",
+                          "items": {
+                            "type": "integer",
+                            "example": 1,
+                            "default": 0
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "401",
+            "content": {
+              "application/json": {
+                "examples": {
+                  "Result": {
+                    "value": "{\n    \"status\": \"failed\",\n    \"statusCode\": 401,\n    \"errors\": true,\n    \"message\": \"Missing or Invalid API Key.\",\n    \"data\": []\n}"
+                  }
+                },
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "status": {
+                      "type": "string",
+                      "example": "failed"
+                    },
+                    "statusCode": {
+                      "type": "integer",
+                      "example": 401,
+                      "default": 0
+                    },
+                    "errors": {
+                      "type": "boolean",
+                      "example": true,
+                      "default": true
+                    },
+                    "message": {
+                      "type": "string",
+                      "example": "Missing or Invalid API Key."
+                    },
+                    "data": {
+                      "type": "array"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "deprecated": false
+      }
+    },
+    "/airtime/operators/{country}": {
+      "get": {
+        "summary": "GetOperatorsByCountry",
+        "description": "",
+        "operationId": "getoperatorsbycountry",
+        "parameters": [
+          {
+            "name": "country",
+            "in": "path",
+            "description": "Country ISO code (2 letters) Eg: CD, US, FR, etc...",
+            "schema": {
+              "type": "string"
+            },
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "200",
+            "content": {
+              "application/json": {
+                "examples": {
+                  "Result": {
+                    "value": "{\n    \"status\": \"success\",\n    \"statusCode\": 200,\n    \"errors\": false,\n    \"message\": \"Operators list fetched successfully\",\n    \"data\": [\n        {\n            \"operatorId\": 729,\n            \"name\": \"168 Thailand\",\n            \"logo\": \"https://s3.amazonaws.com/rld-operator/13f57481-aad1-4534-8434-428f7ea32ffb-size-1.png\",\n            \"country\": \"TH\",\n            \"fromCurrency\": \"USD\",\n            \"toCurrency\": \"THB\",\n            \"rate\": 24.39,\n            \"hasFixedAmounts\": true,\n            \"fixedAmounts\": [\n                0.41,\n                0.81,\n                2.03,\n                4.05,\n                8.1,\n                12.14,\n                20.23\n            ],\n            \"suggestedAmounts\": []\n        }\n    ]\n}"
+                  }
+                },
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "status": {
+                      "type": "string",
+                      "example": "success"
+                    },
+                    "statusCode": {
+                      "type": "integer",
+                      "example": 200,
+                      "default": 0
+                    },
+                    "errors": {
+                      "type": "boolean",
+                      "example": false,
+                      "default": true
+                    },
+                    "message": {
+                      "type": "string",
+                      "example": "Operators list fetched successfully"
+                    },
+                    "data": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "operatorId": {
+                            "type": "integer",
+                            "example": 729,
+                            "default": 0
+                          },
+                          "name": {
+                            "type": "string",
+                            "example": "168 Thailand"
+                          },
+                          "logo": {
+                            "type": "string",
+                            "example": "https://s3.amazonaws.com/rld-operator/13f57481-aad1-4534-8434-428f7ea32ffb-size-1.png"
+                          },
+                          "country": {
+                            "type": "string",
+                            "example": "TH"
+                          },
+                          "fromCurrency": {
+                            "type": "string",
+                            "example": "USD"
+                          },
+                          "toCurrency": {
+                            "type": "string",
+                            "example": "THB"
+                          },
+                          "rate": {
+                            "type": "number",
+                            "example": 24.39,
+                            "default": 0
+                          },
+                          "hasFixedAmounts": {
+                            "type": "boolean",
+                            "example": true,
+                            "default": true
+                          },
+                          "fixedAmounts": {
+                            "type": "array",
+                            "items": {
+                              "type": "number",
+                              "example": 0.41,
+                              "default": 0
+                            }
+                          },
+                          "suggestedAmounts": {
+                            "type": "array"
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "401",
+            "content": {
+              "application/json": {
+                "examples": {
+                  "Result": {
+                    "value": "{\n    \"status\": \"failed\",\n    \"statusCode\": 401,\n    \"errors\": true,\n    \"message\": \"Missing or Invalid API Key.\",\n    \"data\": []\n}"
+                  }
+                },
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "status": {
+                      "type": "string",
+                      "example": "failed"
+                    },
+                    "statusCode": {
+                      "type": "integer",
+                      "example": 401,
+                      "default": 0
+                    },
+                    "errors": {
+                      "type": "boolean",
+                      "example": true,
+                      "default": true
+                    },
+                    "message": {
+                      "type": "string",
+                      "example": "Missing or Invalid API Key."
+                    },
+                    "data": {
+                      "type": "array"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "deprecated": false
+      }
+    },
+    "/airtime/countries": {
+      "get": {
+        "summary": "GetCountriesList",
+        "description": "",
+        "operationId": "getcountrieslist",
+        "responses": {
+          "200": {
+            "description": "200",
+            "content": {
+              "application/json": {
+                "examples": {
+                  "Result": {
+                    "value": "{\n    \"status\": \"success\",\n    \"statusCode\": 200,\n    \"errors\": false,\n    \"message\": \"Countries data fetched successfully\",\n    \"data\": [\n        {\n            \"isoName\": \"AF\",\n            \"name\": \"Afghanistan\",\n            \"currencyCode\": \"AFN\",\n            \"currencyName\": \"Afghan Afghani\",\n            \"currencySymbol\": \"؋\",\n            \"flag\": \"https://s3.amazonaws.com/rld-flags/af.svg\",\n            \"callingCodes\": [\n                \"+93\"\n            ]\n        },\n        {\n            \"isoName\": \"AL\",\n            \"name\": \"Albania\",\n            \"currencyCode\": \"ALL\",\n            \"currencyName\": \"Albanian Lek\",\n            \"currencySymbol\": \"Lek\",\n            \"flag\": \"https://s3.amazonaws.com/rld-flags/al.svg\",\n            \"callingCodes\": [\n                \"+355\"\n            ]\n        }\n    ]\n}"
+                  }
+                },
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "status": {
+                      "type": "string",
+                      "example": "success"
+                    },
+                    "statusCode": {
+                      "type": "integer",
+                      "example": 200,
+                      "default": 0
+                    },
+                    "errors": {
+                      "type": "boolean",
+                      "example": false,
+                      "default": true
+                    },
+                    "message": {
+                      "type": "string",
+                      "example": "Countries data fetched successfully"
+                    },
+                    "data": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "isoName": {
+                            "type": "string",
+                            "example": "AF"
+                          },
+                          "name": {
+                            "type": "string",
+                            "example": "Afghanistan"
+                          },
+                          "currencyCode": {
+                            "type": "string",
+                            "example": "AFN"
+                          },
+                          "currencyName": {
+                            "type": "string",
+                            "example": "Afghan Afghani"
+                          },
+                          "currencySymbol": {
+                            "type": "string",
+                            "example": "؋"
+                          },
+                          "flag": {
+                            "type": "string",
+                            "example": "https://s3.amazonaws.com/rld-flags/af.svg"
+                          },
+                          "callingCodes": {
+                            "type": "array",
+                            "items": {
+                              "type": "string",
+                              "example": "+93"
+                            }
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "401",
+            "content": {
+              "application/json": {
+                "examples": {
+                  "Result": {
+                    "value": "{\n    \"status\": \"failed\",\n    \"statusCode\": 401,\n    \"errors\": true,\n    \"message\": \"Missing or Invalid API Key.\",\n    \"data\": []\n}"
+                  }
+                },
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "status": {
+                      "type": "string",
+                      "example": "failed"
+                    },
+                    "statusCode": {
+                      "type": "integer",
+                      "example": 401,
+                      "default": 0
+                    },
+                    "errors": {
+                      "type": "boolean",
+                      "example": true,
+                      "default": true
+                    },
+                    "message": {
+                      "type": "string",
+                      "example": "Missing or Invalid API Key."
+                    },
+                    "data": {
+                      "type": "array"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "deprecated": false
+      }
+    },
+    "/cardholders/{reference}": {
+      "get": {
+        "summary": "GetCardHolderDetails",
+        "description": "",
+        "operationId": "getcustomerdetails",
+        "parameters": [
+          {
+            "name": "reference",
+            "in": "path",
+            "description": "Enter the CardHolder Reference to fetch his details",
+            "schema": {
+              "type": "string"
+            },
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "200",
+            "content": {
+              "application/json": {
+                "examples": {
+                  "Result": {
+                    "value": "{\n    \"status\": \"success\",\n    \"statusCode\": 200,\n    \"errors\": false,\n    \"message\": \"CardHolder details fetched successfully\",\n    \"data\": {\n        \"customerId\": \"CTM63CAF3720FBD782350\",\n        \"fullName\": \"Joan Guy\",\n        \"email\": \"gosomekox@mailinator.com\",\n        \"phone\": \"+13715862121\",\n        \"status\": \"ACTIVE\",\n        \"createdAt\": \"2023-01-20 23:02:58\"\n    }\n}"
+                  }
+                },
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "status": {
+                      "type": "string",
+                      "example": "success"
+                    },
+                    "statusCode": {
+                      "type": "integer",
+                      "example": 200,
+                      "default": 0
+                    },
+                    "errors": {
+                      "type": "boolean",
+                      "example": false,
+                      "default": true
+                    },
+                    "message": {
+                      "type": "string",
+                      "example": "CardHolder details fetched successfully"
+                    },
+                    "data": {
+                      "type": "object",
+                      "properties": {
+                        "customerId": {
+                          "type": "string",
+                          "example": "CTM63CAF3720FBD782350"
+                        },
+                        "fullName": {
+                          "type": "string",
+                          "example": "Joan Guy"
+                        },
+                        "email": {
+                          "type": "string",
+                          "example": "gosomekox@mailinator.com"
+                        },
+                        "phone": {
+                          "type": "string",
+                          "example": "+13715862121"
+                        },
+                        "status": {
+                          "type": "string",
+                          "example": "ACTIVE"
+                        },
+                        "createdAt": {
+                          "type": "string",
+                          "example": "2023-01-20 23:02:58"
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "404",
+            "content": {
+              "application/json": {
+                "examples": {
+                  "Result": {
+                    "value": "{\n    \"status\": \"failed\",\n    \"statusCode\": 404,\n    \"errors\": true,\n    \"message\": \"No customer found with the given ID\",\n    \"data\": []\n}"
+                  }
+                },
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "status": {
+                      "type": "string",
+                      "example": "failed"
+                    },
+                    "statusCode": {
+                      "type": "integer",
+                      "example": 404,
+                      "default": 0
+                    },
+                    "errors": {
+                      "type": "boolean",
+                      "example": true,
+                      "default": true
+                    },
+                    "message": {
+                      "type": "string",
+                      "example": "No customer found with the given ID"
+                    },
+                    "data": {
+                      "type": "array"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "deprecated": false
+      },
+      "delete": {
+        "summary": "DeleteCardHolder",
+        "description": "",
+        "operationId": "deletecardholder",
+        "parameters": [
+          {
+            "name": "reference",
+            "in": "path",
+            "description": "Enter the CardHolder Reference to fetch his details",
+            "schema": {
+              "type": "string"
+            },
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "200",
+            "content": {
+              "application/json": {
+                "examples": {
+                  "Result": {
+                    "value": "{}"
+                  }
+                },
+                "schema": {
+                  "type": "object",
+                  "properties": {
+
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "404",
+            "content": {
+              "application/json": {
+                "examples": {
+                  "Result": {
+                    "value": "{\n    \"status\": \"failed\",\n    \"statusCode\": 404,\n    \"errors\": true,\n    \"message\": \"No customer found with the given ID\",\n    \"data\": []\n}"
+                  }
+                },
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "status": {
+                      "type": "string",
+                      "example": "failed"
+                    },
+                    "statusCode": {
+                      "type": "integer",
+                      "example": 404,
+                      "default": 0
+                    },
+                    "errors": {
+                      "type": "boolean",
+                      "example": true,
+                      "default": true
+                    },
+                    "message": {
+                      "type": "string",
+                      "example": "No customer found with the given ID"
+                    },
+                    "data": {
+                      "type": "array"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "deprecated": false
+      },
+      "patch": {
+        "summary": "UpdateCardHolderDetails",
+        "description": "",
+        "operationId": "updatecardholderdetails",
+        "parameters": [
+          {
+            "name": "reference",
+            "in": "path",
+            "description": "Enter the CardHolder Reference to fetch his details",
+            "schema": {
+              "type": "string"
+            },
+            "required": true
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "firstName": {
+                    "type": "string",
+                    "description": "Updated First Name of the CardHolder in Latin Format"
+                  },
+                  "lastName": {
+                    "type": "string",
+                    "description": "Updated Last Name of the CardHolder in Latin Format"
+                  },
+                  "email": {
+                    "type": "string",
+                    "description": "New Email Address of the CardHolder"
+                  },
+                  "phone": {
+                    "type": "string",
+                    "description": "New Phone Number of the CardHolder"
+                  },
+                  "dateOfBirth": {
+                    "type": "string",
+                    "description": "New Birth Date of the CardHolder",
+                    "format": "date"
+                  },
+                  "gender": {
+                    "type": "string",
+                    "description": "Updated Gender of the CardHolder",
+                    "default": "M",
+                    "enum": [
+                      "1",
+                      "2"
+                    ]
+                  },
+                  "status": {
+                    "type": "string",
+                    "description": "Change Status of the CardHolder",
+                    "default": "ACTIVE",
+                    "enum": [
+                      "ACTIVE",
+                      "INACTIVE"
+                    ]
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "200",
+            "content": {
+              "application/json": {
+                "examples": {
+                  "Result": {
+                    "value": "{\n    \"status\": \"success\",\n    \"statusCode\": 200,\n    \"errors\": false,\n    \"message\": \"CardHolder updated successfully\",\n    \"data\": {\n        \"customerId\": \"CTM63CAF3720FBD782350\",\n        \"firstName\": \"Joan\",\n        \"lastName\": \"Guy\",\n        \"dateOfBirth\": \"1993-12-24\",\n        \"gender\": \"F\",\n        \"email\": \"gosomekox@mailinator.com\",\n        \"phone\": \"+13715862121\",\n        \"status\": \"ACTIVE\",\n        \"createdAt\": \"2023-01-20 23:02:58\"\n    }\n}"
+                  }
+                },
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "status": {
+                      "type": "string",
+                      "example": "success"
+                    },
+                    "statusCode": {
+                      "type": "integer",
+                      "example": 200,
+                      "default": 0
+                    },
+                    "errors": {
+                      "type": "boolean",
+                      "example": false,
+                      "default": true
+                    },
+                    "message": {
+                      "type": "string",
+                      "example": "CardHolder updated successfully"
+                    },
+                    "data": {
+                      "type": "object",
+                      "properties": {
+                        "customerId": {
+                          "type": "string",
+                          "example": "CTM63CAF3720FBD782350"
+                        },
+                        "firstName": {
+                          "type": "string",
+                          "example": "Joan"
+                        },
+                        "lastName": {
+                          "type": "string",
+                          "example": "Guy"
+                        },
+                        "dateOfBirth": {
+                          "type": "string",
+                          "example": "1993-12-24"
+                        },
+                        "gender": {
+                          "type": "string",
+                          "example": "F"
+                        },
+                        "email": {
+                          "type": "string",
+                          "example": "gosomekox@mailinator.com"
+                        },
+                        "phone": {
+                          "type": "string",
+                          "example": "+13715862121"
+                        },
+                        "status": {
+                          "type": "string",
+                          "example": "ACTIVE"
+                        },
+                        "createdAt": {
+                          "type": "string",
+                          "example": "2023-01-20 23:02:58"
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "404",
+            "content": {
+              "application/json": {
+                "examples": {
+                  "Result": {
+                    "value": "{\n    \"status\": \"failed\",\n    \"statusCode\": 404,\n    \"errors\": true,\n    \"message\": \"No customer found with the given ID\",\n    \"data\": []\n}"
+                  }
+                },
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "status": {
+                      "type": "string",
+                      "example": "failed"
+                    },
+                    "statusCode": {
+                      "type": "integer",
+                      "example": 404,
+                      "default": 0
+                    },
+                    "errors": {
+                      "type": "boolean",
+                      "example": true,
+                      "default": true
+                    },
+                    "message": {
+                      "type": "string",
+                      "example": "No customer found with the given ID"
+                    },
+                    "data": {
+                      "type": "array"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "deprecated": false
+      }
+    },
+    "/airtime/topup": {
+      "post": {
+        "summary": "TopupPhoneNumber",
+        "description": "",
+        "operationId": "topupphonenumber",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "phone",
+                  "country",
+                  "operatorId",
+                  "amount"
+                ],
+                "properties": {
+                  "phone": {
+                    "type": "integer",
+                    "description": "Enter a phone number in International format without (+) sign. Eg: 243970000000",
+                    "format": "int64"
+                  },
+                  "country": {
+                    "type": "string",
+                    "description": "Enter country ISO code. (2 letters). Eg: CD, US, FR, etc..."
+                  },
+                  "operatorId": {
+                    "type": "integer",
+                    "description": "The ID of the operator in Fyatu",
+                    "format": "int32"
+                  },
+                  "amount": {
+                    "type": "number",
+                    "description": "Amount to Topup (It must be a supported amount from the suggested amount list or Fixed amount list of an operator)",
+                    "format": "float"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "200",
+            "content": {
+              "application/json": {
+                "examples": {
+                  "Result": {
+                    "value": "{\n    \"status\": \"success\",\n    \"statusCode\": 200,\n    \"errors\": false,\n    \"message\": \"The recipient 250796633225 has been credited successfully\",\n    \"data\": {\n        \"reference\": \"RCH6231C36888583\",\n        \"status\": \"SUCCESSFUL\",\n        \"phone\": \"250796633225\",\n        \"country\": \"RW\",\n        \"operatorId\": 417,\n        \"operatorName\": \"MTN Rwanda\",\n        \"requestedAmount\": 5,\n        \"requestedCurrency\": \"USD\",\n        \"deliveredAmount\": 4000,\n        \"deliveredCurrency\": \"RWF\",\n        \"transactionDate\": \"2022-03-16 07:00:57\"\n    }\n}"
+                  }
+                },
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "status": {
+                      "type": "string",
+                      "example": "success"
+                    },
+                    "statusCode": {
+                      "type": "integer",
+                      "example": 200,
+                      "default": 0
+                    },
+                    "errors": {
+                      "type": "boolean",
+                      "example": false,
+                      "default": true
+                    },
+                    "message": {
+                      "type": "string",
+                      "example": "The recipient 250796633225 has been credited successfully"
+                    },
+                    "data": {
+                      "type": "object",
+                      "properties": {
+                        "reference": {
+                          "type": "string",
+                          "example": "RCH6231C36888583"
+                        },
+                        "status": {
+                          "type": "string",
+                          "example": "SUCCESSFUL"
+                        },
+                        "phone": {
+                          "type": "string",
+                          "example": "250796633225"
+                        },
+                        "country": {
+                          "type": "string",
+                          "example": "RW"
+                        },
+                        "operatorId": {
+                          "type": "integer",
+                          "example": 417,
+                          "default": 0
+                        },
+                        "operatorName": {
+                          "type": "string",
+                          "example": "MTN Rwanda"
+                        },
+                        "requestedAmount": {
+                          "type": "integer",
+                          "example": 5,
+                          "default": 0
+                        },
+                        "requestedCurrency": {
+                          "type": "string",
+                          "example": "USD"
+                        },
+                        "deliveredAmount": {
+                          "type": "integer",
+                          "example": 4000,
+                          "default": 0
+                        },
+                        "deliveredCurrency": {
+                          "type": "string",
+                          "example": "RWF"
+                        },
+                        "transactionDate": {
+                          "type": "string",
+                          "example": "2022-03-16 07:00:57"
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "401",
+            "content": {
+              "application/json": {
+                "examples": {
+                  "Result": {
+                    "value": "{\n    \"status\": \"failed\",\n    \"statusCode\": 401,\n    \"errors\": true,\n    \"message\": \"Missing or Invalid API Key.\",\n    \"data\": []\n}"
+                  }
+                },
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "status": {
+                      "type": "string",
+                      "example": "failed"
+                    },
+                    "statusCode": {
+                      "type": "integer",
+                      "example": 401,
+                      "default": 0
+                    },
+                    "errors": {
+                      "type": "boolean",
+                      "example": true,
+                      "default": true
+                    },
+                    "message": {
+                      "type": "string",
+                      "example": "Missing or Invalid API Key."
+                    },
+                    "data": {
+                      "type": "array"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "deprecated": false
+      }
+    },
+    "/cardproducts": {
+      "get": {
+        "summary": "GetCardProductsList",
+        "description": "",
+        "operationId": "getcardproductslist",
+        "responses": {
+          "200": {
+            "description": "200",
+            "content": {
+              "application/json": {
+                "examples": {
+                  "Result": {
+                    "value": "{\n    \"status\": \"success\",\n    \"statusCode\": 200,\n    \"errors\": false,\n    \"message\": \"Card Products fetched successfully\",\n    \"data\": [\n        {\n            \"name\": \"VISA Prépayé Marketing\",\n            \"code\": \"V_VS_PREPAID_USD_MEDIA\",\n            \"type\": \"PREPAID\",\n            \"nature\": \"VIRTUAL\",\n            \"scheme\": \"VISA\",\n            \"currency\": \"USD\",\n            \"acceptance\": \"MARKETING\",\n            \"is_3ds\": false,\n            \"monthly_price\": \"1.00\"\n        }\n    ]\n}"
+                  }
+                },
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "status": {
+                      "type": "string",
+                      "example": "success"
+                    },
+                    "statusCode": {
+                      "type": "integer",
+                      "example": 200,
+                      "default": 0
+                    },
+                    "errors": {
+                      "type": "boolean",
+                      "example": false,
+                      "default": true
+                    },
+                    "message": {
+                      "type": "string",
+                      "example": "Card Products fetched successfully"
+                    },
+                    "data": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "name": {
+                            "type": "string",
+                            "example": "VISA Prépayé Marketing"
+                          },
+                          "code": {
+                            "type": "string",
+                            "example": "V_VS_PREPAID_USD_MEDIA"
+                          },
+                          "type": {
+                            "type": "string",
+                            "example": "PREPAID"
+                          },
+                          "nature": {
+                            "type": "string",
+                            "example": "VIRTUAL"
+                          },
+                          "scheme": {
+                            "type": "string",
+                            "example": "VISA"
+                          },
+                          "currency": {
+                            "type": "string",
+                            "example": "USD"
+                          },
+                          "acceptance": {
+                            "type": "string",
+                            "example": "MARKETING"
+                          },
+                          "is_3ds": {
+                            "type": "boolean",
+                            "example": false,
+                            "default": true
+                          },
+                          "monthly_price": {
+                            "type": "string",
+                            "example": "1.00"
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "401",
+            "content": {
+              "application/json": {
+                "examples": {
+                  "Result": {
+                    "value": "{\n    \"status\": \"failed\",\n    \"statusCode\": 401,\n    \"errors\": true,\n    \"message\": \"Missing or Invalid API Key.\",\n    \"data\": []\n}"
+                  }
+                },
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "status": {
+                      "type": "string",
+                      "example": "failed"
+                    },
+                    "statusCode": {
+                      "type": "integer",
+                      "example": 401,
+                      "default": 0
+                    },
+                    "errors": {
+                      "type": "boolean",
+                      "example": true,
+                      "default": true
+                    },
+                    "message": {
+                      "type": "string",
+                      "example": "Missing or Invalid API Key."
+                    },
+                    "data": {
+                      "type": "array"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "deprecated": false
+      }
+    },
+    "/cardproducts/{product_code}": {
+      "get": {
+        "summary": "GetCardProductDetails",
+        "description": "",
+        "operationId": "getcardproductdetails",
+        "parameters": [
+          {
+            "name": "product_code",
+            "in": "path",
+            "description": "Enter the Card Product Code to fetch details",
+            "schema": {
+              "type": "string"
+            },
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "200",
+            "content": {
+              "application/json": {
+                "examples": {
+                  "Result": {
+                    "value": "{\n    \"status\": \"success\",\n    \"statusCode\": 200,\n    \"errors\": false,\n    \"message\": \"CardProduct fetched successfully\",\n    \"data\": {\n        \"name\": \"Mastercard Crédit Marketing - USD\",\n        \"code\": \"V_MC_CREDIT_USD_MEDIA\",\n        \"type\": \"CREDIT\",\n        \"nature\": \"VIRTUAL\",\n        \"scheme\": \"MASTERCARD\",\n        \"currency\": \"USD\",\n        \"acceptance\": \"MARKETING\",\n        \"is_3ds\": false,\n        \"monthly_price\": \"1.00\",\n        \"availableBins\": [\n            {\n                \"bin\": \"537100\",\n                \"status\": \"ACTIVE\"\n            },\n            {\n                \"bin\": \"540588\",\n                \"status\": \"ACTIVE\"\n            }\n        ]\n    }\n}"
+                  }
+                },
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "status": {
+                      "type": "string",
+                      "example": "success"
+                    },
+                    "statusCode": {
+                      "type": "integer",
+                      "example": 200,
+                      "default": 0
+                    },
+                    "errors": {
+                      "type": "boolean",
+                      "example": false,
+                      "default": true
+                    },
+                    "message": {
+                      "type": "string",
+                      "example": "CardProduct fetched successfully"
+                    },
+                    "data": {
+                      "type": "object",
+                      "properties": {
+                        "name": {
+                          "type": "string",
+                          "example": "Mastercard Crédit Marketing - USD"
+                        },
+                        "code": {
+                          "type": "string",
+                          "example": "V_MC_CREDIT_USD_MEDIA"
+                        },
+                        "type": {
+                          "type": "string",
+                          "example": "CREDIT"
+                        },
+                        "nature": {
+                          "type": "string",
+                          "example": "VIRTUAL"
+                        },
+                        "scheme": {
+                          "type": "string",
+                          "example": "MASTERCARD"
+                        },
+                        "currency": {
+                          "type": "string",
+                          "example": "USD"
+                        },
+                        "acceptance": {
+                          "type": "string",
+                          "example": "MARKETING"
+                        },
+                        "is_3ds": {
+                          "type": "boolean",
+                          "example": false,
+                          "default": true
+                        },
+                        "monthly_price": {
+                          "type": "string",
+                          "example": "1.00"
+                        },
+                        "availableBins": {
+                          "type": "array",
+                          "items": {
+                            "type": "object",
+                            "properties": {
+                              "bin": {
+                                "type": "string",
+                                "example": "537100"
+                              },
+                              "status": {
+                                "type": "string",
+                                "example": "ACTIVE"
+                              }
+                            }
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "401",
+            "content": {
+              "application/json": {
+                "examples": {
+                  "Result": {
+                    "value": "{\n    \"status\": \"failed\",\n    \"statusCode\": 401,\n    \"errors\": true,\n    \"message\": \"Missing or Invalid API Key.\",\n    \"data\": []\n}"
+                  }
+                },
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "status": {
+                      "type": "string",
+                      "example": "failed"
+                    },
+                    "statusCode": {
+                      "type": "integer",
+                      "example": 401,
+                      "default": 0
+                    },
+                    "errors": {
+                      "type": "boolean",
+                      "example": true,
+                      "default": true
+                    },
+                    "message": {
+                      "type": "string",
+                      "example": "Missing or Invalid API Key."
+                    },
+                    "data": {
+                      "type": "array"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "deprecated": false
+      }
+    },
+    "/business": {
+      "get": {
+        "summary": "GetBusiness",
+        "description": "",
+        "operationId": "getcardbinslist",
+        "parameters": [
+          {
+            "name": "business-id",
+            "in": "header",
+            "description": "Your Business ID",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "200",
+            "content": {
+              "application/json": {
+                "examples": {
+                  "Result": {
+                    "value": "{\n  \"status\": \"success\",\n  \"statusCode\": 200,\n  \"errors\": false,\n  \"message\": \"Fetched Successfully\",\n  \"data\": {\n    \"businessId\": \"12345678-aaaa-bbbb-cccc-1234567890ab\",\n    \"appName\": \"DummyApp\",\n    \"businessName\": \"Dummy Corp\",\n    \"supportEmail\": \"support@dummy.com\",\n    \"phoneNumber\": \"+1234567890\",\n    \"category\": \"technology\",\n    \"country\": \"US\",\n    \"businessAddress\": \"123 Dummy Street, Dummy City, DU 12345\",\n    \"directorName\": \"John Doe\",\n    \"websiteUrl\": \"https://dummy.com\",\n    \"status\": \"ACTIVE\",\n    \"joinedDate\": \"2025-02-26 22:06:31\",\n    \"wallet\": {\n      \"balance\": \"100.50\",\n      \"holdBalance\": \"25.00\",\n      \"currency\": \"USD\",\n      \"deposit\": {\n        \"address\": \"XYZ123ABC456DEF789\",\n        \"network\": \"ETH\",\n        \"currency\": \"USDC\"\n      }\n    },\n    \"subscription\": {\n      \"plan\": \"enterprise_plan\",\n      \"isTrial\": true,\n      \"remainingCards\": \"Unlimited\",\n      \"startTime\": \"2025-02-26\",\n      \"endTime\": \"2025-04-27\",\n      \"status\": \"ACTIVE\"\n    }\n  }\n}\n"
+                  }
+                },
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "status": {
+                      "type": "string",
+                      "example": "success"
+                    },
+                    "statusCode": {
+                      "type": "integer",
+                      "example": 200,
+                      "default": 0
+                    },
+                    "errors": {
+                      "type": "boolean",
+                      "example": false,
+                      "default": true
+                    },
+                    "message": {
+                      "type": "string",
+                      "example": "Fetched Successfully"
+                    },
+                    "data": {
+                      "type": "object",
+                      "properties": {
+                        "businessId": {
+                          "type": "string",
+                          "example": "12345678-aaaa-bbbb-cccc-1234567890ab"
+                        },
+                        "appName": {
+                          "type": "string",
+                          "example": "DummyApp"
+                        },
+                        "businessName": {
+                          "type": "string",
+                          "example": "Dummy Corp"
+                        },
+                        "supportEmail": {
+                          "type": "string",
+                          "example": "support@dummy.com"
+                        },
+                        "phoneNumber": {
+                          "type": "string",
+                          "example": "+1234567890"
+                        },
+                        "category": {
+                          "type": "string",
+                          "example": "technology"
+                        },
+                        "country": {
+                          "type": "string",
+                          "example": "US"
+                        },
+                        "businessAddress": {
+                          "type": "string",
+                          "example": "123 Dummy Street, Dummy City, DU 12345"
+                        },
+                        "directorName": {
+                          "type": "string",
+                          "example": "John Doe"
+                        },
+                        "websiteUrl": {
+                          "type": "string",
+                          "example": "https://dummy.com"
+                        },
+                        "status": {
+                          "type": "string",
+                          "example": "ACTIVE"
+                        },
+                        "joinedDate": {
+                          "type": "string",
+                          "example": "2025-02-26 22:06:31"
+                        },
+                        "wallet": {
+                          "type": "object",
+                          "properties": {
+                            "balance": {
+                              "type": "string",
+                              "example": "100.50"
+                            },
+                            "holdBalance": {
+                              "type": "string",
+                              "example": "25.00"
+                            },
+                            "currency": {
+                              "type": "string",
+                              "example": "USD"
+                            },
+                            "deposit": {
+                              "type": "object",
+                              "properties": {
+                                "address": {
+                                  "type": "string",
+                                  "example": "XYZ123ABC456DEF789"
+                                },
+                                "network": {
+                                  "type": "string",
+                                  "example": "ETH"
+                                },
+                                "currency": {
+                                  "type": "string",
+                                  "example": "USDC"
+                                }
+                              }
+                            }
+                          }
+                        },
+                        "subscription": {
+                          "type": "object",
+                          "properties": {
+                            "plan": {
+                              "type": "string",
+                              "example": "enterprise_plan"
+                            },
+                            "isTrial": {
+                              "type": "boolean",
+                              "example": true,
+                              "default": true
+                            },
+                            "remainingCards": {
+                              "type": "string",
+                              "example": "Unlimited"
+                            },
+                            "startTime": {
+                              "type": "string",
+                              "example": "2025-02-26"
+                            },
+                            "endTime": {
+                              "type": "string",
+                              "example": "2025-04-27"
+                            },
+                            "status": {
+                              "type": "string",
+                              "example": "ACTIVE"
+                            }
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "401",
+            "content": {
+              "application/json": {
+                "examples": {
+                  "Result": {
+                    "value": "{\n    \"status\": \"failed\",\n    \"statusCode\": 401,\n    \"errors\": true,\n    \"message\": \"Missing or Invalid API Key.\",\n    \"data\": []\n}"
+                  }
+                },
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "status": {
+                      "type": "string",
+                      "example": "failed"
+                    },
+                    "statusCode": {
+                      "type": "integer",
+                      "example": 401,
+                      "default": 0
+                    },
+                    "errors": {
+                      "type": "boolean",
+                      "example": true,
+                      "default": true
+                    },
+                    "message": {
+                      "type": "string",
+                      "example": "Missing or Invalid API Key."
+                    },
+                    "data": {
+                      "type": "array"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "deprecated": false
+      }
+    },
+    "/webhooks": {
+      "get": {
+        "summary": "GetWebhook",
+        "description": "",
+        "operationId": "getwebhooks",
+        "responses": {
+          "200": {
+            "description": "200",
+            "content": {
+              "application/json": {
+                "examples": {
+                  "Result": {
+                    "value": "{\n    \"status\": \"success\",\n    \"statusCode\": 200,\n    \"errors\": false,\n    \"message\": \"Webhook fetched successfully\",\n    \"data\": {\n        \"appName\": \"My Business\",\n        \"endpointUrl\": \"https://exemple.com/webhook.php\",\n        \"appId\": \"app_2KVY0PTV1eRD8LPYD0xXl7quKPG\",\n        \"endpointId\": \"ep_2KVY0bRt6JAVJmZgzx0NTa1qT1e\",\n        \"events\": [\n            \"3ds.received\",\n            \"card.blocked\",\n            \"card.overdraft\",\n            \"card.reordered\",\n            \"transaction.created\"\n        ],\n        \"createdAt\": \"2023-01-18 19:56:34\",\n        \"updatedAt\": \"2023-01-30 12:55:01\"\n    }\n}"
+                  }
+                },
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "status": {
+                      "type": "string",
+                      "example": "success"
+                    },
+                    "statusCode": {
+                      "type": "integer",
+                      "example": 200,
+                      "default": 0
+                    },
+                    "errors": {
+                      "type": "boolean",
+                      "example": false,
+                      "default": true
+                    },
+                    "message": {
+                      "type": "string",
+                      "example": "Webhook fetched successfully"
+                    },
+                    "data": {
+                      "type": "object",
+                      "properties": {
+                        "appName": {
+                          "type": "string",
+                          "example": "My Business"
+                        },
+                        "endpointUrl": {
+                          "type": "string",
+                          "example": "https://exemple.com/webhook.php"
+                        },
+                        "appId": {
+                          "type": "string",
+                          "example": "app_2KVY0PTV1eRD8LPYD0xXl7quKPG"
+                        },
+                        "endpointId": {
+                          "type": "string",
+                          "example": "ep_2KVY0bRt6JAVJmZgzx0NTa1qT1e"
+                        },
+                        "events": {
+                          "type": "array",
+                          "items": {
+                            "type": "string",
+                            "example": "3ds.received"
+                          }
+                        },
+                        "createdAt": {
+                          "type": "string",
+                          "example": "2023-01-18 19:56:34"
+                        },
+                        "updatedAt": {
+                          "type": "string",
+                          "example": "2023-01-30 12:55:01"
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "404",
+            "content": {
+              "application/json": {
+                "examples": {
+                  "Result": {
+                    "value": "{\n    \"status\": \"failed\",\n    \"statusCode\": 404,\n    \"errors\": true,\n    \"message\": \"No Webhook Found.\",\n    \"data\": []\n}"
+                  }
+                },
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "status": {
+                      "type": "string",
+                      "example": "failed"
+                    },
+                    "statusCode": {
+                      "type": "integer",
+                      "example": 404,
+                      "default": 0
+                    },
+                    "errors": {
+                      "type": "boolean",
+                      "example": true,
+                      "default": true
+                    },
+                    "message": {
+                      "type": "string",
+                      "example": "No Webhook Found."
+                    },
+                    "data": {
+                      "type": "array"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "deprecated": false
+      },
+      "delete": {
+        "summary": "DeleteWebhook",
+        "description": "",
+        "operationId": "deletewebhook",
+        "responses": {
+          "200": {
+            "description": "200",
+            "content": {
+              "application/json": {
+                "examples": {
+                  "Result": {
+                    "value": "{\n    \"status\": \"success\",\n    \"statusCode\": 200,\n    \"errors\": false,\n    \"message\": \"Webhook deleted successfully\",\n    \"data\": {}\n}"
+                  }
+                },
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "status": {
+                      "type": "string",
+                      "example": "success"
+                    },
+                    "statusCode": {
+                      "type": "integer",
+                      "example": 200,
+                      "default": 0
+                    },
+                    "errors": {
+                      "type": "boolean",
+                      "example": false,
+                      "default": true
+                    },
+                    "message": {
+                      "type": "string",
+                      "example": "Webhook deleted successfully"
+                    },
+                    "data": {
+                      "type": "object",
+                      "properties": {
+
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "404",
+            "content": {
+              "application/json": {
+                "examples": {
+                  "Result": {
+                    "value": "{\n    \"status\": \"failed\",\n    \"statusCode\": 404,\n    \"errors\": true,\n    \"message\": \"No Webhook Found.\",\n    \"data\": []\n}"
+                  }
+                },
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "status": {
+                      "type": "string",
+                      "example": "failed"
+                    },
+                    "statusCode": {
+                      "type": "integer",
+                      "example": 404,
+                      "default": 0
+                    },
+                    "errors": {
+                      "type": "boolean",
+                      "example": true,
+                      "default": true
+                    },
+                    "message": {
+                      "type": "string",
+                      "example": "No Webhook Found."
+                    },
+                    "data": {
+                      "type": "array"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "deprecated": false
+      },
+      "post": {
+        "summary": "CreateWebhook",
+        "description": "",
+        "operationId": "createwebhook",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "appName",
+                  "endpointUrl",
+                  "events"
+                ],
+                "properties": {
+                  "appName": {
+                    "type": "string",
+                    "description": "Name of your Application"
+                  },
+                  "endpointUrl": {
+                    "type": "string",
+                    "description": "Your Callback URL (Must Accept POST Requests)"
+                  },
+                  "events": {
+                    "type": "string",
+                    "description": "List of Events separated by a comma (without space).",
+                    "default": "3ds.received,card.blocked,card.overdraft,card.reordered,transaction.created"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "200",
+            "content": {
+              "application/json": {
+                "examples": {
+                  "Result": {
+                    "value": "{\n    \"status\": \"success\",\n    \"statusCode\": 200,\n    \"errors\": false,\n    \"message\": \"Webhook fetched successfully\",\n    \"data\": {\n        \"appName\": \"My Business\",\n        \"endpointUrl\": \"https://exemple.com/webhook.php\",\n        \"appId\": \"app_2KVY0PTV1eRD8LPYD0xXl7quKPG\",\n        \"endpointId\": \"ep_2KVY0bRt6JAVJmZgzx0NTa1qT1e\",\n        \"events\": [\n            \"3ds.received\",\n            \"card.blocked\",\n            \"card.overdraft\",\n            \"card.reordered\",\n            \"transaction.created\"\n        ],\n        \"createdAt\": \"2023-01-18 19:56:34\",\n        \"updatedAt\": \"2023-01-30 12:55:01\"\n    }\n}"
+                  }
+                },
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "status": {
+                      "type": "string",
+                      "example": "success"
+                    },
+                    "statusCode": {
+                      "type": "integer",
+                      "example": 200,
+                      "default": 0
+                    },
+                    "errors": {
+                      "type": "boolean",
+                      "example": false,
+                      "default": true
+                    },
+                    "message": {
+                      "type": "string",
+                      "example": "Webhook fetched successfully"
+                    },
+                    "data": {
+                      "type": "object",
+                      "properties": {
+                        "appName": {
+                          "type": "string",
+                          "example": "My Business"
+                        },
+                        "endpointUrl": {
+                          "type": "string",
+                          "example": "https://exemple.com/webhook.php"
+                        },
+                        "appId": {
+                          "type": "string",
+                          "example": "app_2KVY0PTV1eRD8LPYD0xXl7quKPG"
+                        },
+                        "endpointId": {
+                          "type": "string",
+                          "example": "ep_2KVY0bRt6JAVJmZgzx0NTa1qT1e"
+                        },
+                        "events": {
+                          "type": "array",
+                          "items": {
+                            "type": "string",
+                            "example": "3ds.received"
+                          }
+                        },
+                        "createdAt": {
+                          "type": "string",
+                          "example": "2023-01-18 19:56:34"
+                        },
+                        "updatedAt": {
+                          "type": "string",
+                          "example": "2023-01-30 12:55:01"
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "404",
+            "content": {
+              "application/json": {
+                "examples": {
+                  "Result": {
+                    "value": "{\n    \"status\": \"failed\",\n    \"statusCode\": 404,\n    \"errors\": true,\n    \"message\": \"No Webhook Found.\",\n    \"data\": []\n}"
+                  }
+                },
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "status": {
+                      "type": "string",
+                      "example": "failed"
+                    },
+                    "statusCode": {
+                      "type": "integer",
+                      "example": 404,
+                      "default": 0
+                    },
+                    "errors": {
+                      "type": "boolean",
+                      "example": true,
+                      "default": true
+                    },
+                    "message": {
+                      "type": "string",
+                      "example": "No Webhook Found."
+                    },
+                    "data": {
+                      "type": "array"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "deprecated": false
+      },
+      "patch": {
+        "summary": "UpdateWebhook",
+        "description": "",
+        "operationId": "updatewebhook",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "appName": {
+                    "type": "string",
+                    "description": "Name of your Application"
+                  },
+                  "endpointUrl": {
+                    "type": "string",
+                    "description": "Your Callback URL (Must Accept POST Requests)"
+                  },
+                  "events": {
+                    "type": "string",
+                    "description": "List of Events separated by a comma (without space).",
+                    "default": "3ds.received,card.blocked,card.overdraft,card.reordered,transaction.created"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "200",
+            "content": {
+              "application/json": {
+                "examples": {
+                  "Result": {
+                    "value": "{\n    \"status\": \"success\",\n    \"statusCode\": 200,\n    \"errors\": false,\n    \"message\": \"Webhook updated successfully\",\n    \"data\": {\n        \"appName\": \"My Business\",\n        \"endpointUrl\": \"https://exemple.com/webhook.php\",\n        \"appId\": \"app_2KVY0PTV1eRD8LPYD0xXl7quKPG\",\n        \"endpointId\": \"ep_2KVY0bRt6JAVJmZgzx0NTa1qT1e\",\n        \"events\": [\n            \"3ds.received\",\n            \"card.blocked\",\n            \"card.overdraft\",\n            \"card.reordered\",\n            \"transaction.created\"\n        ],\n        \"createdAt\": \"2023-01-18 19:56:34\",\n        \"updatedAt\": \"2023-01-30 12:55:01\"\n    }\n}"
+                  }
+                },
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "status": {
+                      "type": "string",
+                      "example": "success"
+                    },
+                    "statusCode": {
+                      "type": "integer",
+                      "example": 200,
+                      "default": 0
+                    },
+                    "errors": {
+                      "type": "boolean",
+                      "example": false,
+                      "default": true
+                    },
+                    "message": {
+                      "type": "string",
+                      "example": "Webhook updated successfully"
+                    },
+                    "data": {
+                      "type": "object",
+                      "properties": {
+                        "appName": {
+                          "type": "string",
+                          "example": "My Business"
+                        },
+                        "endpointUrl": {
+                          "type": "string",
+                          "example": "https://exemple.com/webhook.php"
+                        },
+                        "appId": {
+                          "type": "string",
+                          "example": "app_2KVY0PTV1eRD8LPYD0xXl7quKPG"
+                        },
+                        "endpointId": {
+                          "type": "string",
+                          "example": "ep_2KVY0bRt6JAVJmZgzx0NTa1qT1e"
+                        },
+                        "events": {
+                          "type": "array",
+                          "items": {
+                            "type": "string",
+                            "example": "3ds.received"
+                          }
+                        },
+                        "createdAt": {
+                          "type": "string",
+                          "example": "2023-01-18 19:56:34"
+                        },
+                        "updatedAt": {
+                          "type": "string",
+                          "example": "2023-01-30 12:55:01"
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "404",
+            "content": {
+              "application/json": {
+                "examples": {
+                  "Result": {
+                    "value": "{\n    \"status\": \"failed\",\n    \"statusCode\": 404,\n    \"errors\": true,\n    \"message\": \"No Webhook Found.\",\n    \"data\": []\n}"
+                  }
+                },
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "status": {
+                      "type": "string",
+                      "example": "failed"
+                    },
+                    "statusCode": {
+                      "type": "integer",
+                      "example": 404,
+                      "default": 0
+                    },
+                    "errors": {
+                      "type": "boolean",
+                      "example": true,
+                      "default": true
+                    },
+                    "message": {
+                      "type": "string",
+                      "example": "No Webhook Found."
+                    },
+                    "data": {
+                      "type": "array"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "deprecated": false
+      }
+    },
+    "/webhooks/ping": {
+      "post": {
+        "summary": "TestWebhook",
+        "description": "",
+        "operationId": "testwebhook",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "event"
+                ],
+                "properties": {
+                  "event": {
+                    "type": "string",
+                    "description": "Select Event to Test with your implementation",
+                    "default": "3ds.received",
+                    "enum": [
+                      "3ds.received",
+                      "transaction.created",
+                      "card.blocked",
+                      "card.overdraft",
+                      "card.reordered"
+                    ]
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "200",
+            "content": {
+              "application/json": {
+                "examples": {
+                  "Result": {
+                    "value": "{\n  \"status\": \"success\",\n  \"statusCode\": 200,\n  \"errors\": false,\n  \"message\": \"Webhook sent successfully\",\n  \"data\": {\n    \"event\": \"3ds.received\",\n    \"hash\": \"0730964F56E975A7B133D2F87586574E\",\n    \"infos\": {\n      \"cardId\": \"45df8ef-d895s-8953fr-da793se7\",\n      \"maskedNumber\": \"486555******0830\",\n      \"otpCode\": \"443001\",\n      \"validity\": \"15 minutes\"\n    },\n    \"message\": \"OTP 3D Secure Notification\",\n    \"status\": \"Pending Auth\",\n    \"version\": 1\n  }\n}"
+                  }
+                },
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "status": {
+                      "type": "string",
+                      "example": "success"
+                    },
+                    "statusCode": {
+                      "type": "integer",
+                      "example": 200,
+                      "default": 0
+                    },
+                    "errors": {
+                      "type": "boolean",
+                      "example": false,
+                      "default": true
+                    },
+                    "message": {
+                      "type": "string",
+                      "example": "Webhook sent successfully"
+                    },
+                    "data": {
+                      "type": "object",
+                      "properties": {
+                        "event": {
+                          "type": "string",
+                          "example": "3ds.received"
+                        },
+                        "hash": {
+                          "type": "string",
+                          "example": "0730964F56E975A7B133D2F87586574E"
+                        },
+                        "infos": {
+                          "type": "object",
+                          "properties": {
+                            "cardId": {
+                              "type": "string",
+                              "example": "45df8ef-d895s-8953fr-da793se7"
+                            },
+                            "maskedNumber": {
+                              "type": "string",
+                              "example": "486555******0830"
+                            },
+                            "otpCode": {
+                              "type": "string",
+                              "example": "443001"
+                            },
+                            "validity": {
+                              "type": "string",
+                              "example": "15 minutes"
+                            }
+                          }
+                        },
+                        "message": {
+                          "type": "string",
+                          "example": "OTP 3D Secure Notification"
+                        },
+                        "status": {
+                          "type": "string",
+                          "example": "Pending Auth"
+                        },
+                        "version": {
+                          "type": "integer",
+                          "example": 1,
+                          "default": 0
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "404",
+            "content": {
+              "application/json": {
+                "examples": {
+                  "Result": {
+                    "value": "{\n    \"status\": \"failed\",\n    \"statusCode\": 404,\n    \"errors\": true,\n    \"message\": \"No Webhook Found.\",\n    \"data\": []\n}"
+                  }
+                },
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "status": {
+                      "type": "string",
+                      "example": "failed"
+                    },
+                    "statusCode": {
+                      "type": "integer",
+                      "example": 404,
+                      "default": 0
+                    },
+                    "errors": {
+                      "type": "boolean",
+                      "example": true,
+                      "default": true
+                    },
+                    "message": {
+                      "type": "string",
+                      "example": "No Webhook Found."
+                    },
+                    "data": {
+                      "type": "array"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "deprecated": false
       }
     }
-  }
+  },
+  "x-readme": {
+    "headers": [
+      {
+        "key": "Accept",
+        "value": "application/json"
+      },
+      {
+        "key": "Content-type",
+        "value": "application/json"
+      }
+    ],
+    "explorer-enabled": true,
+    "proxy-enabled": true
+  },
+  "x-readme-fauxas": true
 }
